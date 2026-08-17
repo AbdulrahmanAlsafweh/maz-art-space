@@ -30,7 +30,7 @@ function clamp(value: number, min = 0, max = 1) {
 }
 
 function easeInOut(value: number) {
-    return value < 0.5 ? 4 * value * value * value : 1 - Math.pow(-2 * value + 2, 3) / 2;
+    return value * value * value * (value * (value * 6 - 15) + 10);
 }
 
 function interpolate(start: number, end: number, progress: number) {
@@ -40,6 +40,8 @@ function interpolate(start: number, end: number, progress: number) {
 export function ColorScrollAnimation() {
     const sectionRef = useRef<HTMLElement>(null);
     const stageRef = useRef<HTMLDivElement>(null);
+    const progressRef = useRef(0);
+    const targetProgressRef = useRef(0);
     const [progress, setProgress] = useState(0);
     const [stageSize, setStageSize] = useState<StageSize>({ width: 1120, height: 620 });
 
@@ -81,7 +83,42 @@ export function ColorScrollAnimation() {
             return;
         }
 
-        let frameId = 0;
+        let scrollFrameId = 0;
+        let smoothingFrameId = 0;
+        let lastFrameTime = performance.now();
+
+        const setSmoothedProgress = (nextProgress: number) => {
+            progressRef.current = nextProgress;
+            setProgress(nextProgress);
+        };
+
+        const animateProgress = (time: number) => {
+            const elapsed = Math.min(time - lastFrameTime, 64);
+            lastFrameTime = time;
+
+            const currentProgress = progressRef.current;
+            const targetProgress = targetProgressRef.current;
+            const smoothing = 1 - Math.pow(0.0008, elapsed / 1000);
+            const nextProgress = currentProgress + (targetProgress - currentProgress) * smoothing;
+
+            if (Math.abs(targetProgress - nextProgress) < 0.0008) {
+                setSmoothedProgress(targetProgress);
+                smoothingFrameId = 0;
+                return;
+            }
+
+            setSmoothedProgress(nextProgress);
+            smoothingFrameId = window.requestAnimationFrame(animateProgress);
+        };
+
+        const scheduleSmoothing = () => {
+            if (smoothingFrameId) {
+                return;
+            }
+
+            lastFrameTime = performance.now();
+            smoothingFrameId = window.requestAnimationFrame(animateProgress);
+        };
 
         const updateProgress = () => {
             const section = sectionRef.current;
@@ -95,12 +132,13 @@ export function ColorScrollAnimation() {
             const travel = Math.max(rect.height - viewportHeight * 0.42, 1);
             const nextProgress = clamp((viewportHeight * 0.72 - rect.top) / travel, 0, 1.25);
 
-            setProgress((currentProgress) => (Math.abs(currentProgress - nextProgress) > 0.001 ? nextProgress : currentProgress));
+            targetProgressRef.current = nextProgress;
+            scheduleSmoothing();
         };
 
         const scheduleUpdate = () => {
-            window.cancelAnimationFrame(frameId);
-            frameId = window.requestAnimationFrame(updateProgress);
+            window.cancelAnimationFrame(scrollFrameId);
+            scrollFrameId = window.requestAnimationFrame(updateProgress);
         };
 
         updateProgress();
@@ -108,7 +146,8 @@ export function ColorScrollAnimation() {
         window.addEventListener('resize', scheduleUpdate);
 
         return () => {
-            window.cancelAnimationFrame(frameId);
+            window.cancelAnimationFrame(scrollFrameId);
+            window.cancelAnimationFrame(smoothingFrameId);
             window.removeEventListener('scroll', scheduleUpdate);
             window.removeEventListener('resize', scheduleUpdate);
         };
@@ -150,6 +189,7 @@ export function ColorScrollAnimation() {
                             left: x,
                             top: y,
                             transform: `translate(-50%, -50%) rotate(${rotation}deg) scale(${scale})`,
+                            willChange: 'transform',
                             width: itemWidth,
                             zIndex: 20 + index,
                         };

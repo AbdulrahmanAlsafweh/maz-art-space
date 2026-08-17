@@ -7,6 +7,10 @@ Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
 
+Route::get('/products/maz-watercolor-kit', function () {
+    return Inertia::render('products/maz-watercolor-kit');
+})->name('products.maz-watercolor-kit');
+
 Route::middleware(['auth'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');

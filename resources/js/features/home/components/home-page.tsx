@@ -1,10 +1,11 @@
 import { Button } from '@/components/ui/button';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { ArrowRight, ShoppingBag, UserRound } from 'lucide-react';
+import { ShopLayout } from '@/features/shop/components/shop-layout';
+import { kitImage, mazWatercolorKitPath } from '@/features/shop/product-data';
+import { ChevronDown } from 'lucide-react';
 import { ColorScrollAnimation } from './color-scroll-animation';
 import { KitOptionCard, type KitOptionCardProps } from './kit-option-card';
-
-const kitImage = '/kit.png';
 
 const kitOptions: KitOptionCardProps[] = [
     {
@@ -13,6 +14,7 @@ const kitOptions: KitOptionCardProps[] = [
         price: '$45.00',
         imageSrc: kitImage,
         imageAlt: 'MAZ Watercolour Essential Kit',
+        productHref: mazWatercolorKitPath,
     },
     {
         title: 'Pro Bundle',
@@ -20,6 +22,7 @@ const kitOptions: KitOptionCardProps[] = [
         price: '$65.00',
         imageSrc: kitImage,
         imageAlt: 'MAZ Watercolour Pro Bundle',
+        productHref: mazWatercolorKitPath,
         featured: true,
     },
     {
@@ -28,6 +31,7 @@ const kitOptions: KitOptionCardProps[] = [
         price: '$85.00',
         imageSrc: kitImage,
         imageAlt: "MAZ Watercolour Artist's Suite",
+        productHref: mazWatercolorKitPath,
     },
 ];
 
@@ -143,54 +147,12 @@ const faqs = [
     },
 ];
 
-const navLinks = ['Shop', 'Our Story', 'Gallery', 'Cart'];
-
 function sectionHeading(title: string, subtitle?: string) {
     return (
         <div className="mx-auto max-w-3xl text-center">
             <h2 className="font-['Cormorant_Garamond'] text-[50px] leading-none font-medium text-[#123b6d] md:text-[72px]">{title}</h2>
             {subtitle ? <p className="mt-7 text-[18px] leading-7 text-[#4c525c]">{subtitle}</p> : null}
         </div>
-    );
-}
-
-function Header() {
-    return (
-        <header className="bg-white font-['Instrument_Sans'] text-[#123b6d]">
-            <div className="flex h-[35px] items-center justify-center bg-[#123b6d] text-[13px] font-medium tracking-[0.24em] text-white uppercase">
-                FREE DELIVERY OVER LEBANON
-            </div>
-            <div className="relative mx-auto flex h-[112px] max-w-[1788px] items-center justify-between px-6 md:px-10 xl:px-0">
-                <nav className="hidden items-center gap-12 text-[14px] tracking-[0.16em] text-[#22252c] md:flex">
-                    {navLinks.map((item) => (
-                        <a
-                            key={item}
-                            href={item === 'Shop' ? '#kit-options' : `#${item.toLowerCase().replace(' ', '-')}`}
-                            className={item === 'Shop' ? 'border-b border-[#123b6d] pb-2 text-[#123b6d]' : 'transition-colors hover:text-[#123b6d]'}
-                        >
-                            {item}
-                        </a>
-                    ))}
-                </nav>
-
-                <a
-                    href="#"
-                    className="font-['Cormorant_Garamond'] text-[58px] leading-none font-semibold text-[#123b6d] md:absolute md:left-1/2 md:-translate-x-1/2 md:text-[88px]"
-                    aria-label="MAZ home"
-                >
-                    MAZ
-                </a>
-
-                <div className="flex items-center gap-7">
-                    <a href="#cart" className="transition-colors hover:text-[#0f315b]" aria-label="Cart">
-                        <ShoppingBag className="size-6 stroke-[2]" />
-                    </a>
-                    <a href="#account" className="transition-colors hover:text-[#0f315b]" aria-label="Account">
-                        <UserRound className="size-6 stroke-[2]" />
-                    </a>
-                </div>
-            </div>
-        </header>
     );
 }
 
@@ -340,16 +302,21 @@ function Faq() {
                 {sectionHeading('Common Questions', 'Everything you need to know about the MAZ experience.')}
 
                 <div className="mx-auto mt-20 max-w-[1160px]">
-                    {faqs.map((faq, index) => (
-                        <div
-                            key={faq.question}
-                            className={index === 0 ? 'border-b border-[#cfd5dd] pb-10' : 'border-b border-[#cfd5dd] py-10 last:border-b-0'}
-                        >
-                            <h3 className="font-['Cormorant_Garamond'] text-[29px] leading-snug font-medium text-[#123b6d] md:text-[33px]">
-                                {faq.question}
-                            </h3>
-                            <p className="mt-5 text-[19px] leading-8 text-[#4a4f58]">{faq.answer}</p>
-                        </div>
+                    {faqs.map((faq) => (
+                        <Collapsible key={faq.question} className="border-b border-[#cfd5dd]">
+                            <CollapsibleTrigger className="group/faq flex w-full items-center justify-between gap-6 py-10 text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#123b6d]">
+                                <span className="font-['Cormorant_Garamond'] text-[29px] leading-snug font-medium text-[#123b6d] md:text-[33px]">
+                                    {faq.question}
+                                </span>
+                                <ChevronDown
+                                    className="size-7 shrink-0 text-[#123b6d] transition-transform duration-300 ease-out group-data-[state=open]/faq:rotate-180"
+                                    aria-hidden="true"
+                                />
+                            </CollapsibleTrigger>
+                            <CollapsibleContent className="data-[state=closed]:animate-out data-[state=open]:animate-in data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 overflow-hidden">
+                                <p className="max-w-[980px] pb-10 text-[19px] leading-8 text-[#4a4f58]">{faq.answer}</p>
+                            </CollapsibleContent>
+                        </Collapsible>
                     ))}
                 </div>
             </div>
@@ -357,103 +324,20 @@ function Faq() {
     );
 }
 
-function Footer() {
-    return (
-        <footer className="border-t border-[#d9dde2] bg-white px-6 font-['Instrument_Sans'] text-[#404651] md:px-10">
-            <div className="mx-auto max-w-[1788px] pt-24 pb-9">
-                <div className="grid gap-14 md:grid-cols-[1.1fr_1fr_1fr_1.2fr]">
-                    <div>
-                        <div className="font-['Cormorant_Garamond'] text-[72px] leading-none font-semibold text-[#123b6d] md:text-[88px]">MAZ</div>
-                        <p className="mt-11 max-w-[320px] text-[19px] leading-8">
-                            Curating tools for intentional creators. Elevating the daily practice of art.
-                        </p>
-                    </div>
-
-                    <div>
-                        <h3 className="text-[18px] leading-none font-medium tracking-[0.18em] text-[#123b6d]">SHOP</h3>
-                        <ul className="mt-10 space-y-7 text-[18px]">
-                            <li>
-                                <a href="#kit-options">All Products</a>
-                            </li>
-                            <li>
-                                <a href="#kit-options">Watercolor Kits</a>
-                            </li>
-                            <li>
-                                <a href="#kit-options">Accessories</a>
-                            </li>
-                            <li>
-                                <a href="#kit-options">Gift Cards</a>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div>
-                        <h3 className="text-[18px] leading-none font-medium tracking-[0.18em] text-[#123b6d]">SUPPORT</h3>
-                        <ul className="mt-10 space-y-7 text-[18px]">
-                            <li>
-                                <a href="#faq">FAQ</a>
-                            </li>
-                            <li>
-                                <a href="#shipping">Shipping & Returns</a>
-                            </li>
-                            <li>
-                                <a href="#contact">Contact Us</a>
-                            </li>
-                            <li>
-                                <a href="#care-guide">Care Guide</a>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div>
-                        <h3 className="text-[18px] leading-none font-medium tracking-[0.18em] text-[#123b6d]">STAY CONNECTED</h3>
-                        <p className="mt-10 max-w-[300px] text-[19px] leading-8">Subscribe for updates and artistic inspiration.</p>
-                        <input
-                            type="email"
-                            placeholder="Email address"
-                            className="mt-8 h-[62px] w-full max-w-[385px] border border-[#c9ced6] px-5 text-[18px] text-[#404651] placeholder:text-[#a2a8b0] focus:border-[#123b6d] focus:outline-none"
-                        />
-                        <button
-                            type="button"
-                            className="mt-9 inline-flex items-center gap-3 text-[18px] leading-none font-medium tracking-[0.18em] text-[#123b6d]"
-                        >
-                            SUBSCRIBE
-                            <ArrowRight className="size-5 stroke-[1.8]" aria-hidden="true" />
-                        </button>
-                    </div>
-                </div>
-
-                <div className="mt-24 flex flex-col gap-8 border-t border-[#d9dde2] pt-9 text-[16px] md:flex-row md:items-center md:justify-between">
-                    <p>&copy; 2024 MAZ Art Space. Crafted with intentionality.</p>
-                    <div className="flex flex-wrap gap-10">
-                        <a href="#privacy">Privacy Policy</a>
-                        <a href="#terms">Terms of Service</a>
-                        <a href="#instagram">Instagram</a>
-                    </div>
-                </div>
-            </div>
-        </footer>
-    );
-}
-
 export function HomePage() {
     return (
-        <div className="min-h-screen overflow-x-hidden bg-white">
-            <div className="origin-top bg-white font-['Instrument_Sans'] text-[#404651] [zoom:0.575]">
-                <Header />
-                <main>
-                    <Hero />
-                    <WhatsInside />
-                    <ColorScrollAnimation />
-                    <KitOptions />
-                    <Testimonials />
-                    <PracticeGallery />
-                    <div id="faq">
-                        <Faq />
-                    </div>
-                </main>
-                <Footer />
-            </div>
-        </div>
+        <ShopLayout>
+            <main>
+                <Hero />
+                <WhatsInside />
+                <ColorScrollAnimation />
+                <KitOptions />
+                <Testimonials />
+                <PracticeGallery />
+                <div id="faq">
+                    <Faq />
+                </div>
+            </main>
+        </ShopLayout>
     );
 }
