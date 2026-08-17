@@ -31,7 +31,7 @@ export function ShopHeader() {
 
                 <Link
                     href="/"
-                    className="font-['Cormorant_Garamond'] text-[58px] leading-none font-semibold text-[#123b6d] md:absolute md:left-1/2 md:-translate-x-1/2 md:text-[88px]"
+                    className="font-['Cormorant_Garamond'] text-[58px] leading-none font-semibold text-[#111111] md:absolute md:left-1/2 md:-translate-x-1/2 md:text-[88px]"
                     aria-label="MAZ home"
                 >
                     MAZ

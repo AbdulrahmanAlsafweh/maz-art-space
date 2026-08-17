@@ -3,7 +3,8 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { ShopLayout } from '@/features/shop/components/shop-layout';
 import { kitImage, mazWatercolorKitPath } from '@/features/shop/product-data';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { ColorScrollAnimation } from './color-scroll-animation';
 import { KitOptionCard, type KitOptionCardProps } from './kit-option-card';
 
@@ -263,32 +264,114 @@ function Testimonials() {
 }
 
 function PracticeGallery() {
+    const [activeSlide, setActiveSlide] = useState(0);
+    const [isSliderPaused, setIsSliderPaused] = useState(false);
+
+    const goToPreviousSlide = () => setActiveSlide((currentSlide) => (currentSlide === 0 ? galleryImages.length - 1 : currentSlide - 1));
+    const goToNextSlide = () => setActiveSlide((currentSlide) => (currentSlide === galleryImages.length - 1 ? 0 : currentSlide + 1));
+
+    useEffect(() => {
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        if (isSliderPaused || prefersReducedMotion) {
+            return;
+        }
+
+        const autoplayId = window.setInterval(goToNextSlide, 4500);
+
+        return () => window.clearInterval(autoplayId);
+    }, [isSliderPaused]);
+
     return (
         <section id="gallery" className="bg-white px-6 md:px-10">
             <div className="mx-auto max-w-[1788px] border-t border-[#d9dde2] py-36 md:py-44">
                 {sectionHeading('In Practice', 'Moments of creation with the MAZ Kit.')}
 
-                <div className="mt-24 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                    {galleryImages.map((image) => (
-                        <Dialog key={image.src}>
-                            <DialogTrigger asChild>
+                <div className="mt-24" onFocus={() => setIsSliderPaused(true)} onBlur={() => setIsSliderPaused(false)}>
+                    <div className="relative mx-auto max-w-[1320px]">
+                        <div className="overflow-hidden" onMouseEnter={() => setIsSliderPaused(true)} onMouseLeave={() => setIsSliderPaused(false)}>
+                            <div
+                                className="flex transition-transform duration-700 ease-out"
+                                style={{ transform: `translateX(-${activeSlide * 100}%)` }}
+                            >
+                                {galleryImages.map((image) => (
+                                    <div key={image.src} className="w-full shrink-0 px-0 md:px-10">
+                                        <Dialog>
+                                            <DialogTrigger asChild>
+                                                <button
+                                                    type="button"
+                                                    className="group mx-auto block aspect-[1.42/1] w-full max-w-[1120px] overflow-hidden bg-[#f4f1ed] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#123b6d]"
+                                                >
+                                                    <img
+                                                        src={image.src}
+                                                        alt={image.alt}
+                                                        className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                                                    />
+                                                </button>
+                                            </DialogTrigger>
+                                            <DialogContent className="max-w-[min(92vw,1100px)] border-0 bg-transparent p-0 shadow-none [&>button]:bg-white/90 [&>button]:text-[#123b6d]">
+                                                <DialogTitle className="sr-only">{image.alt}</DialogTitle>
+                                                <img src={image.src} alt={image.alt} className="max-h-[88vh] w-full rounded-[4px] object-contain" />
+                                            </DialogContent>
+                                        </Dialog>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <button
+                            type="button"
+                            onClick={goToPreviousSlide}
+                            className="absolute top-1/2 left-0 hidden size-14 -translate-y-1/2 items-center justify-center border border-[#123b6d] bg-white text-[#123b6d] transition-colors hover:bg-[#123b6d] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#123b6d] md:flex"
+                            aria-label="Show previous gallery image"
+                        >
+                            <ChevronLeft className="size-7" aria-hidden="true" />
+                        </button>
+                        <button
+                            type="button"
+                            onClick={goToNextSlide}
+                            className="absolute top-1/2 right-0 hidden size-14 -translate-y-1/2 items-center justify-center border border-[#123b6d] bg-white text-[#123b6d] transition-colors hover:bg-[#123b6d] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#123b6d] md:flex"
+                            aria-label="Show next gallery image"
+                        >
+                            <ChevronRight className="size-7" aria-hidden="true" />
+                        </button>
+                    </div>
+
+                    <div className="mt-10 flex items-center justify-center gap-5">
+                        <button
+                            type="button"
+                            onClick={goToPreviousSlide}
+                            className="flex size-12 items-center justify-center border border-[#123b6d] text-[#123b6d] transition-colors hover:bg-[#123b6d] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#123b6d] md:hidden"
+                            aria-label="Show previous gallery image"
+                        >
+                            <ChevronLeft className="size-6" aria-hidden="true" />
+                        </button>
+
+                        <div className="flex items-center gap-3">
+                            {galleryImages.map((image, index) => (
                                 <button
+                                    key={image.src}
                                     type="button"
-                                    className="group aspect-[1.15/1] overflow-hidden bg-[#f4f1ed] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#123b6d]"
-                                >
-                                    <img
-                                        src={image.src}
-                                        alt={image.alt}
-                                        className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-                                    />
-                                </button>
-                            </DialogTrigger>
-                            <DialogContent className="max-w-[min(92vw,1100px)] border-0 bg-transparent p-0 shadow-none [&>button]:bg-white/90 [&>button]:text-[#123b6d]">
-                                <DialogTitle className="sr-only">{image.alt}</DialogTitle>
-                                <img src={image.src} alt={image.alt} className="max-h-[88vh] w-full rounded-[4px] object-contain" />
-                            </DialogContent>
-                        </Dialog>
-                    ))}
+                                    onClick={() => setActiveSlide(index)}
+                                    className={[
+                                        'h-2.5 rounded-full transition-all duration-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#123b6d]',
+                                        activeSlide === index ? 'w-10 bg-[#123b6d]' : 'w-2.5 bg-[#cfd5dd] hover:bg-[#123b6d]',
+                                    ].join(' ')}
+                                    aria-label={`Show gallery image ${index + 1}`}
+                                    aria-current={activeSlide === index}
+                                />
+                            ))}
+                        </div>
+
+                        <button
+                            type="button"
+                            onClick={goToNextSlide}
+                            className="flex size-12 items-center justify-center border border-[#123b6d] text-[#123b6d] transition-colors hover:bg-[#123b6d] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#123b6d] md:hidden"
+                            aria-label="Show next gallery image"
+                        >
+                            <ChevronRight className="size-6" aria-hidden="true" />
+                        </button>
+                    </div>
                 </div>
             </div>
         </section>
