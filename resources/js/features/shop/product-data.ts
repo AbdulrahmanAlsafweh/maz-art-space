@@ -2,11 +2,14 @@ export const productImage = '/optimized/product/box.webp';
 export const kitImage = productImage;
 
 export const mazWatercolorKitPath = '/products/maz-watercolor-kit';
+export const mazWatercolorDoubleKitPath = '/products/maz-watercolor-double-kit';
 
 export interface ShopProduct {
     slug: string;
     title: string;
+    detailTitle: string;
     description: string;
+    detailDescription: string;
     priceCents: number;
     price: string;
     compareAtPriceCents?: number;
@@ -28,7 +31,10 @@ export const shopProducts: ShopProduct[] = [
     {
         slug: 'essential-kit',
         title: 'Single Kit',
+        detailTitle: 'MAZ Watercolor Kit',
         description: 'One complete MAZ watercolor kit.',
+        detailDescription:
+            'Discover the fluidity of pigment and paper with the curated MAZ Watercolor Kit. Designed for artists who seek intentionality in every stroke. Includes 12 lightfast pigments, 2 professional brushes, and an 8 by 8 notebook with paper suitable for watercolors.',
         priceCents: 2500,
         price: formatMoney(2500),
         imageSrc: productImage,
@@ -38,7 +44,10 @@ export const shopProducts: ShopProduct[] = [
     {
         slug: 'pro-bundle',
         title: 'Double Kit Bundle',
+        detailTitle: 'MAZ Double Kit Bundle',
         description: 'Two MAZ watercolor kits. Save $10.',
+        detailDescription:
+            'Create together or keep one kit ready for travel. The Double Kit Bundle includes two complete MAZ Watercolor Kits, each with 12 lightfast pigments, 2 professional brushes, and an 8 by 8 notebook with paper suitable for watercolors.',
         priceCents: 4000,
         price: formatMoney(4000),
         compareAtPriceCents: 5000,
@@ -46,11 +55,13 @@ export const shopProducts: ShopProduct[] = [
         badgeLabel: 'SAVE $10',
         imageSrc: productImage,
         imageAlt: 'MAZ Watercolour Double Kit Bundle box',
-        productHref: mazWatercolorKitPath,
+        productHref: mazWatercolorDoubleKitPath,
     },
 ];
 
-export const primaryShopProduct = shopProducts[0];
+export const singleKitProduct = shopProducts[0];
+export const doubleKitProduct = shopProducts[1];
+export const primaryShopProduct = singleKitProduct;
 
 export const productGalleryImages = [
     {

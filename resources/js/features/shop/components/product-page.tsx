@@ -1,7 +1,7 @@
 import { ScrollReveal } from '@/components/shared/scroll-reveal';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { primaryShopProduct, productGalleryImages } from '@/features/shop/product-data';
+import { productGalleryImages, type ShopProduct } from '@/features/shop/product-data';
 import { router } from '@inertiajs/react';
 import { CheckCircle2, ChevronLeft, ChevronRight, Droplets, Maximize2, Paintbrush, Palette, ZoomIn, ZoomOut } from 'lucide-react';
 import { type CSSProperties, type ReactNode, type PointerEvent as ReactPointerEvent, useRef, useState } from 'react';
@@ -342,29 +342,38 @@ function handleBuyNowNavigation() {
     }, 220);
 }
 
-function ProductInfo() {
+function ProductInfo({ product }: { product: ShopProduct }) {
     return (
         <aside className="pt-2 lg:pt-5">
             <h1 className="font-['Cormorant_Garamond'] text-[40px] leading-none font-semibold text-[#123b6d] md:text-[50px] lg:text-[64px]">
-                MAZ Watercolor Kit
+                {product.detailTitle}
             </h1>
-            <p className="mt-6 text-[26px] leading-none font-medium text-[#a0432f] lg:mt-8 lg:text-[34px]">{primaryShopProduct.price}</p>
+            <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3 lg:mt-8">
+                {product.compareAtPrice ? (
+                    <span className="text-[22px] leading-none font-medium text-[#7a818c] line-through decoration-[#a0432f] decoration-2 lg:text-[29px]">
+                        {product.compareAtPrice}
+                    </span>
+                ) : null}
+                <span className="text-[26px] leading-none font-medium text-[#a0432f] lg:text-[34px]">{product.price}</span>
+                {product.badgeLabel ? (
+                    <span className="bg-[#123b6d] px-4 py-2 text-[12px] leading-none font-bold tracking-[0.14em] text-white uppercase lg:text-[14px]">
+                        {product.badgeLabel}
+                    </span>
+                ) : null}
+            </div>
 
-            <p className="mt-10 text-[20px] leading-8 text-[#4a4f58] lg:mt-12 lg:text-[25px] lg:leading-[1.65]">
-                Discover the fluidity of pigment and paper with the curated MAZ Watercolor Kit. Designed for artists who seek intentionality in every
-                stroke. Includes 12 lightfast pigments, 2 professional brushes, and an 8 by 8 notebook with paper suitable for watercolors.
-            </p>
+            <p className="mt-10 text-[20px] leading-8 text-[#4a4f58] lg:mt-12 lg:text-[25px] lg:leading-[1.65]">{product.detailDescription}</p>
 
             <div className="mt-12 space-y-4 lg:mt-14 lg:space-y-5">
                 <AddToCartButton
-                    product={primaryShopProduct}
+                    product={product}
                     className="h-[48px] w-full rounded-none border-[#123b6d] bg-white text-[13px] font-medium tracking-[0.18em] text-[#123b6d] transition-colors hover:bg-[#123b6d] hover:text-white focus-visible:bg-[#123b6d] focus-visible:text-white lg:h-[64px] lg:text-[15px]"
                     showIcon
                 >
                     ADD TO CART
                 </AddToCartButton>
                 <AddToCartButton
-                    product={primaryShopProduct}
+                    product={product}
                     className="h-[46px] w-full rounded-none border-[#838994] bg-white text-[13px] font-medium tracking-[0.18em] text-[#123b6d] hover:bg-[#f8f9fb] hover:text-[#123b6d] lg:h-[62px] lg:text-[15px]"
                     onAdded={handleBuyNowNavigation}
                     showQuantityControl={false}
@@ -468,7 +477,7 @@ function ArtistReviews() {
     );
 }
 
-export function ProductPage() {
+export function ProductPage({ product }: { product: ShopProduct }) {
     return (
         <ShopLayout>
             <main>
@@ -478,7 +487,7 @@ export function ProductPage() {
                             <ProductGallery />
                         </ScrollReveal>
                         <ScrollReveal delay={140} duration={880} y={32}>
-                            <ProductInfo />
+                            <ProductInfo product={product} />
                         </ScrollReveal>
                     </div>
                 </section>

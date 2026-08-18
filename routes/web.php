@@ -12,6 +12,10 @@ Route::get('/products/maz-watercolor-kit', function () {
     return Inertia::render('products/maz-watercolor-kit');
 })->name('products.maz-watercolor-kit');
 
+Route::get('/products/maz-watercolor-double-kit', function () {
+    return Inertia::render('products/maz-watercolor-double-kit');
+})->name('products.maz-watercolor-double-kit');
+
 Route::get('/cart', function () {
     return Inertia::render('cart');
 })->name('cart');
