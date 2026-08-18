@@ -5,7 +5,7 @@ export type Appearance = 'light';
 const applyLightTheme = () => {
     document.documentElement.classList.remove('dark');
     document.documentElement.classList.add('light');
-    document.documentElement.style.colorScheme = 'light';
+    document.documentElement.style.colorScheme = 'only light';
 };
 
 export function initializeTheme() {

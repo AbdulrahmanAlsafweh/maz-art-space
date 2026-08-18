@@ -15,7 +15,7 @@ const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 document.documentElement.classList.remove('dark');
 document.documentElement.classList.add('light');
-document.documentElement.style.colorScheme = 'light';
+document.documentElement.style.colorScheme = 'only light';
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
