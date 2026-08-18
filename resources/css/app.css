@@ -77,6 +77,8 @@
 html {
     color-scheme: only light !important;
     background-color: #ffffff !important;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
 }
 
 :root {
@@ -149,6 +151,35 @@ html {
     select,
     button {
         color-scheme: only light !important;
+    }
+}
+
+html,
+body,
+#app {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
+}
+
+.maz-shop-viewport {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+}
+
+.maz-shop-content {
+    width: 100%;
+    zoom: 0.575;
+}
+
+/* CSS zoom is unavailable before Safari 17.4. Keep the same visual scale on
+   older iPhones without changing the responsive breakpoint calculations. */
+@supports not (zoom: 1) {
+    .maz-shop-content {
+        width: 173.9130434783%;
+        transform: scale(0.575);
+        transform-origin: left top;
     }
 }
 

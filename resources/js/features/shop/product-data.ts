@@ -34,7 +34,7 @@ export const shopProducts: ShopProduct[] = [
         detailTitle: 'MAZ Watercolor Kit',
         description: 'One complete MAZ watercolor kit.',
         detailDescription:
-            'Discover the fluidity of pigment and paper with the curated MAZ Watercolor Kit. Designed for artists who seek intentionality in every stroke. Includes 12 lightfast pigments, 2 professional brushes, and an 8 by 8 notebook with paper suitable for watercolors.',
+            'Discover the fluidity of pigment and paper with the curated MAZ Watercolor Kit. Designed for artists who seek intentionality in every stroke. Includes 12 lightfast pigments, 1 professional brush, and an 8 by 8 notebook with paper suitable for watercolors.',
         priceCents: 2500,
         price: formatMoney(2500),
         imageSrc: productImage,
@@ -47,7 +47,7 @@ export const shopProducts: ShopProduct[] = [
         detailTitle: 'MAZ Double Kit Bundle',
         description: 'Two MAZ watercolor kits. Save $10.',
         detailDescription:
-            'Create together or keep one kit ready for travel. The Double Kit Bundle includes two complete MAZ Watercolor Kits, each with 12 lightfast pigments, 2 professional brushes, and an 8 by 8 notebook with paper suitable for watercolors.',
+            'Create together or keep one kit ready for travel. The Double Kit Bundle includes two complete MAZ Watercolor Kits, each with 12 lightfast pigments, 1 professional brush, and an 8 by 8 notebook with paper suitable for watercolors.',
         priceCents: 4000,
         price: formatMoney(4000),
         compareAtPriceCents: 5000,
