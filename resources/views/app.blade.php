@@ -7,6 +7,8 @@
         <meta name="supported-color-schemes" content="light">
         <meta name="theme-color" content="#ffffff">
 
+        <link rel="icon" type="image/jpeg" href="{{ asset('logo.jpeg') }}">
+
         <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
         <link rel="preconnect" href="https://fonts.bunny.net">

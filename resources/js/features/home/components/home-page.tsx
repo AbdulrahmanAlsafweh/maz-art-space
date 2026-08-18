@@ -6,7 +6,7 @@ import { RatingStars } from '@/features/shop/components/rating-stars';
 import { ShopLayout } from '@/features/shop/components/shop-layout';
 import { shopProducts } from '@/features/shop/product-data';
 import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
-import { type RefObject, useCallback, useEffect, useRef, useState } from 'react';
+import { type PointerEvent as ReactPointerEvent, type RefObject, useCallback, useEffect, useRef, useState } from 'react';
 import { BoxScrollTransition } from './box-scroll-transition';
 import { ColorScrollAnimation } from './color-scroll-animation';
 import { HeroColorMotion } from './hero-color-motion';
@@ -440,9 +440,82 @@ function Testimonials() {
 function PracticeGallery() {
     const [activeSlide, setActiveSlide] = useState(0);
     const [isSliderPaused, setIsSliderPaused] = useState(false);
+    const [dragOffsetPercent, setDragOffsetPercent] = useState(0);
+    const [isDragging, setIsDragging] = useState(false);
+    const dragStartXRef = useRef<number | null>(null);
+    const dragMovedRef = useRef(false);
+    const suppressClickRef = useRef(false);
 
     const goToPreviousSlide = () => setActiveSlide((currentSlide) => (currentSlide === 0 ? galleryImages.length - 1 : currentSlide - 1));
     const goToNextSlide = () => setActiveSlide((currentSlide) => (currentSlide === galleryImages.length - 1 ? 0 : currentSlide + 1));
+
+    const resetDrag = () => {
+        dragStartXRef.current = null;
+        setDragOffsetPercent(0);
+        setIsDragging(false);
+        setIsSliderPaused(false);
+    };
+
+    const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
+        if (event.pointerType === 'mouse') {
+            return;
+        }
+
+        dragStartXRef.current = event.clientX;
+        dragMovedRef.current = false;
+        setIsDragging(true);
+        setIsSliderPaused(true);
+        event.currentTarget.setPointerCapture(event.pointerId);
+    };
+
+    const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+        if (dragStartXRef.current === null) {
+            return;
+        }
+
+        const deltaX = event.clientX - dragStartXRef.current;
+        const viewportWidth = event.currentTarget.getBoundingClientRect().width;
+
+        if (Math.abs(deltaX) > 8) {
+            dragMovedRef.current = true;
+        }
+
+        setDragOffsetPercent(Math.max(Math.min((deltaX / viewportWidth) * 100, 35), -35));
+    };
+
+    const handlePointerUp = (event: ReactPointerEvent<HTMLDivElement>) => {
+        if (dragStartXRef.current === null) {
+            return;
+        }
+
+        const deltaX = event.clientX - dragStartXRef.current;
+        const swipeThreshold = Math.min(event.currentTarget.getBoundingClientRect().width * 0.16, 72);
+
+        if (deltaX <= -swipeThreshold) {
+            goToNextSlide();
+        } else if (deltaX >= swipeThreshold) {
+            goToPreviousSlide();
+        }
+
+        suppressClickRef.current = dragMovedRef.current;
+        resetDrag();
+
+        if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+            event.currentTarget.releasePointerCapture(event.pointerId);
+        }
+
+        window.setTimeout(() => {
+            suppressClickRef.current = false;
+        }, 80);
+    };
+
+    const handlePointerCancel = (event: ReactPointerEvent<HTMLDivElement>) => {
+        resetDrag();
+
+        if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+            event.currentTarget.releasePointerCapture(event.pointerId);
+        }
+    };
 
     useEffect(() => {
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -463,10 +536,27 @@ function PracticeGallery() {
 
                 <ScrollReveal className="mt-24" delay={120} y={38} onFocus={() => setIsSliderPaused(true)} onBlur={() => setIsSliderPaused(false)}>
                     <div className="relative mx-auto max-w-[1520px]">
-                        <div className="overflow-hidden" onMouseEnter={() => setIsSliderPaused(true)} onMouseLeave={() => setIsSliderPaused(false)}>
+                        <div
+                            className="touch-pan-y overflow-hidden select-none md:select-auto"
+                            onMouseEnter={() => setIsSliderPaused(true)}
+                            onMouseLeave={() => setIsSliderPaused(false)}
+                            onPointerDown={handlePointerDown}
+                            onPointerMove={handlePointerMove}
+                            onPointerUp={handlePointerUp}
+                            onPointerCancel={handlePointerCancel}
+                            onClickCapture={(event) => {
+                                if (!suppressClickRef.current) {
+                                    return;
+                                }
+
+                                event.preventDefault();
+                                event.stopPropagation();
+                                suppressClickRef.current = false;
+                            }}
+                        >
                             <div
-                                className="flex transition-transform duration-700 ease-out"
-                                style={{ transform: `translateX(-${activeSlide * 100}%)` }}
+                                className={['flex ease-out', isDragging ? 'transition-none' : 'transition-transform duration-700'].join(' ')}
+                                style={{ transform: `translateX(calc(-${activeSlide * 100}% + ${dragOffsetPercent}%))` }}
                             >
                                 {galleryImages.map((image) => (
                                     <div key={image.src} className="w-full shrink-0 px-0 md:px-10">
@@ -479,6 +569,7 @@ function PracticeGallery() {
                                                     <img
                                                         src={image.src}
                                                         alt={image.alt}
+                                                        draggable={false}
                                                         decoding="async"
                                                         loading="lazy"
                                                         className="h-full w-full object-contain transition-opacity duration-300 ease-out group-hover:opacity-90"
