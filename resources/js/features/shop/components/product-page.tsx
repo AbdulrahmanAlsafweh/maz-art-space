@@ -1,16 +1,16 @@
+import { ScrollReveal } from '@/components/shared/scroll-reveal';
 import { Button } from '@/components/ui/button';
-import { kitImage, productGalleryImages } from '@/features/shop/product-data';
-import { Plus, ShoppingBag, Star, StarHalf } from 'lucide-react';
-import { useState } from 'react';
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { primaryShopProduct, productGalleryImages } from '@/features/shop/product-data';
+import { router } from '@inertiajs/react';
+import { CheckCircle2, ChevronLeft, ChevronRight, Droplets, Maximize2, Paintbrush, Palette, ZoomIn, ZoomOut } from 'lucide-react';
+import { type CSSProperties, type ReactNode, useState } from 'react';
+import { AddToCartButton } from './add-to-cart-button';
+import { RatingStars } from './rating-stars';
 import { ShopLayout } from './shop-layout';
 
-const productThumbnails = productGalleryImages.slice(1);
-
-const specifications = [
-    { label: 'Dimensions', value: '8.5" x 11" (Box)' },
-    { label: 'Weight', value: '1.2 lbs' },
-    { label: 'Material', value: 'Archival Pigments, Natural Hair, Cold-Pressed Cotton' },
-] as const;
+const zoomSteps = [1, 1.35, 1.7, 2.1] as const;
+const galleryImageCount = productGalleryImages.length;
 
 const reviews = [
     {
@@ -19,8 +19,8 @@ const reviews = [
         rating: 5,
     },
     {
-        quote: '"I appreciate the intentionality of the minimal palette. It forces you to mix and discover new hues. The cold-pressed paper holds washes beautifully without buckling."',
-        author: '- MARCUS T., FINE ARTIST',
+        quote: '"I appreciate the intentionality of the minimal palette. It forces you to mix and discover new hues. The watercolor paper holds washes beautifully without buckling."',
+        author: '- AHMAD T., FINE ARTIST',
         rating: 5,
     },
     {
@@ -30,129 +30,313 @@ const reviews = [
     },
 ] as const;
 
-function RatingStars({ half = false, count = 5 }: { half?: boolean; count?: number }) {
+const howItWorksSteps = [
+    {
+        title: 'Fill the brush',
+        description: 'Unscrew the brush, add water, screw it back on. Done. Instant grip and you’re ready to paint.',
+        accent: '#159bd7',
+        softColor: '#eaf7fd',
+        icon: Droplets,
+    },
+    {
+        title: 'Load your color',
+        description:
+            'Squeeze the brush gently. It’ll fill to a drip, then mix it on the palette until you like it. AKA: no cups. More watercolor, fewer miracles.',
+        accent: '#e9b80f',
+        softColor: '#fff8d9',
+        icon: Palette,
+    },
+    {
+        title: 'Paint',
+        description: 'Brush fresh to paper and watch the color bloom. Doodle, blend, experiment. It’s hard to mess up.',
+        accent: '#d84b68',
+        softColor: '#fff0f3',
+        icon: Paintbrush,
+    },
+    {
+        title: 'Clean and go',
+        description: 'Wipe, you’re done. Just shut the case. No rinsing. No scrubbing. Everything else stays stress-free.',
+        accent: '#15915b',
+        softColor: '#eaf8f0',
+        icon: CheckCircle2,
+    },
+] as const;
+
+type ProductGalleryImage = (typeof productGalleryImages)[number];
+
+function ProductImageZoomDialog({ image, children }: { image: ProductGalleryImage; children: ReactNode }) {
+    const [zoomStep, setZoomStep] = useState(0);
+    const zoomLevel = zoomSteps[zoomStep];
+    const canZoomOut = zoomStep > 0;
+    const canZoomIn = zoomStep < zoomSteps.length - 1;
+
     return (
-        <span className="inline-flex items-center gap-0.5 text-[#a0432f]" aria-hidden="true">
-            {Array.from({ length: count }).map((_, index) => (
-                <Star key={index} className="size-4 fill-current stroke-current" />
-            ))}
-            {half ? <StarHalf className="size-4 fill-current stroke-current" /> : null}
-        </span>
-    );
-}
+        <Dialog onOpenChange={(isOpen) => !isOpen && setZoomStep(0)}>
+            <DialogTrigger asChild>{children}</DialogTrigger>
+            <DialogContent className="max-w-[min(94vw,1280px)] gap-0 border-0 bg-white p-0 shadow-[0_28px_90px_rgba(18,59,109,0.18)] [&>button]:bg-white/90 [&>button]:text-[#123b6d]">
+                <DialogTitle className="sr-only">Zoomed product image</DialogTitle>
 
-function ProductGallery() {
-    const [activeImage, setActiveImage] = useState(productGalleryImages[0]);
+                <div className="border-b border-[#e1e3e7] px-6 py-4">
+                    <div className="flex items-center justify-between gap-4 pr-10">
+                        <p className="text-[13px] font-medium tracking-[0.16em] text-[#123b6d] uppercase">{image.alt}</p>
+                        <div className="flex items-center gap-2">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="icon"
+                                onClick={() => setZoomStep((step) => Math.max(step - 1, 0))}
+                                disabled={!canZoomOut}
+                                className="size-10 rounded-none border-[#123b6d] text-[#123b6d] disabled:opacity-35"
+                                aria-label="Zoom out product image"
+                            >
+                                <ZoomOut className="size-5" aria-hidden="true" />
+                            </Button>
+                            <span className="min-w-14 text-center text-[13px] font-medium text-[#4a4f58]">{Math.round(zoomLevel * 100)}%</span>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="icon"
+                                onClick={() => setZoomStep((step) => Math.min(step + 1, zoomSteps.length - 1))}
+                                disabled={!canZoomIn}
+                                className="size-10 rounded-none border-[#123b6d] text-[#123b6d] disabled:opacity-35"
+                                aria-label="Zoom in product image"
+                            >
+                                <ZoomIn className="size-5" aria-hidden="true" />
+                            </Button>
+                        </div>
+                    </div>
+                </div>
 
-    return (
-        <div>
-            <div className="flex aspect-[1.35/1] items-center justify-center bg-white px-8 shadow-[0_22px_70px_rgba(18,59,109,0.06)]">
-                <img
-                    src={activeImage.src}
-                    alt={activeImage.alt}
-                    className={activeImage.src === kitImage ? 'w-full max-w-[560px] object-contain' : 'h-full w-full object-cover'}
-                />
-            </div>
-
-            <div className="mt-6 grid max-w-[475px] grid-cols-3 gap-4">
-                {productThumbnails.map((image) => (
+                <div className="max-h-[78vh] overflow-auto bg-[#fbfaf8] p-6 md:p-10">
                     <button
-                        key={image.src}
                         type="button"
-                        onClick={() => setActiveImage(image)}
-                        className="aspect-square overflow-hidden bg-[#f4f1ed] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#123b6d]"
+                        onClick={() => setZoomStep((step) => (step === zoomSteps.length - 1 ? 0 : step + 1))}
+                        className="mx-auto block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#123b6d]"
+                        aria-label="Toggle product image zoom"
                     >
                         <img
                             src={image.src}
                             alt={image.alt}
-                            className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+                            decoding="async"
+                            className={[
+                                'max-h-[68vh] max-w-full object-contain transition-transform duration-300 ease-out',
+                                zoomStep === zoomSteps.length - 1 ? 'cursor-zoom-out' : 'cursor-zoom-in',
+                            ].join(' ')}
+                            style={{ transform: `scale(${zoomLevel})`, transformOrigin: 'center' }}
                         />
                     </button>
-                ))}
+                </div>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
+function ProductGallery() {
+    const [activeIndex, setActiveIndex] = useState(0);
+    const activeImage = productGalleryImages[activeIndex];
+
+    const goToImage = (index: number) => {
+        setActiveIndex((index + galleryImageCount) % galleryImageCount);
+    };
+
+    return (
+        <div>
+            <div className="relative">
+                <ProductImageZoomDialog image={activeImage}>
+                    <button
+                        type="button"
+                        className="group relative flex aspect-[1.35/1] w-full items-center justify-center overflow-hidden bg-white p-8 shadow-[0_22px_70px_rgba(18,59,109,0.06)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#123b6d]"
+                        aria-label={`Open product image zoom for ${activeImage.alt}`}
+                    >
+                        <span className="relative block h-full w-full overflow-hidden">
+                            <img
+                                key={activeImage.src}
+                                src={activeImage.src}
+                                alt={activeImage.alt}
+                                decoding="async"
+                                fetchPriority={activeIndex === 0 ? 'high' : 'auto'}
+                                loading={activeIndex === 0 ? 'eager' : 'lazy'}
+                                className="absolute inset-0 h-full w-full translate-x-0 object-contain opacity-100 transition-[opacity,transform] duration-500 ease-out"
+                            />
+                        </span>
+                        <span className="absolute right-5 bottom-5 flex size-12 items-center justify-center bg-white/90 text-[#123b6d] shadow-[0_14px_30px_rgba(18,59,109,0.14)] transition-colors group-hover:bg-[#123b6d] group-hover:text-white">
+                            <Maximize2 className="size-5" aria-hidden="true" />
+                        </span>
+                    </button>
+                </ProductImageZoomDialog>
+
+                {galleryImageCount > 1 && (
+                    <>
+                        <button
+                            type="button"
+                            onClick={() => goToImage(activeIndex - 1)}
+                            className="absolute top-1/2 left-4 z-10 flex size-11 -translate-y-1/2 items-center justify-center border border-[#123b6d] bg-white/90 text-[#123b6d] shadow-[0_12px_26px_rgba(18,59,109,0.12)] transition-colors hover:bg-[#123b6d] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#123b6d]"
+                            aria-label="Show previous product image"
+                        >
+                            <ChevronLeft className="size-5" aria-hidden="true" />
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => goToImage(activeIndex + 1)}
+                            className="absolute top-1/2 right-4 z-10 flex size-11 -translate-y-1/2 items-center justify-center border border-[#123b6d] bg-white/90 text-[#123b6d] shadow-[0_12px_26px_rgba(18,59,109,0.12)] transition-colors hover:bg-[#123b6d] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#123b6d]"
+                            aria-label="Show next product image"
+                        >
+                            <ChevronRight className="size-5" aria-hidden="true" />
+                        </button>
+                    </>
+                )}
+            </div>
+
+            <div className="mt-5 flex items-center justify-center gap-4 text-[12px] font-medium tracking-[0.12em] text-[#123b6d] uppercase">
+                <div className="flex items-center gap-2">
+                    {productGalleryImages.map((image, index) => (
+                        <button
+                            key={image.src}
+                            type="button"
+                            onClick={() => goToImage(index)}
+                            className={[
+                                'size-2.5 rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#123b6d]',
+                                index === activeIndex ? 'bg-[#123b6d]' : 'bg-[#c9ced6] hover:bg-[#7a818c]',
+                            ].join(' ')}
+                            aria-label={`Show product image ${index + 1}`}
+                            aria-current={index === activeIndex}
+                        />
+                    ))}
+                </div>
+                <span>
+                    {activeIndex + 1} / {galleryImageCount}
+                </span>
             </div>
         </div>
     );
 }
 
+function handleBuyNowNavigation() {
+    window.setTimeout(() => {
+        router.visit('/cart', {
+            preserveScroll: false,
+        });
+    }, 220);
+}
+
 function ProductInfo() {
     return (
-        <aside className="pt-2">
-            <div className="flex items-center gap-3 text-[16px] text-[#363b45]">
-                <RatingStars half />
-                <span>4.9/5 (120 reviews)</span>
-            </div>
-
-            <h1 className="mt-8 font-['Cormorant_Garamond'] text-[40px] leading-none font-semibold text-[#123b6d] md:text-[43px]">
+        <aside className="pt-2 lg:pt-5">
+            <h1 className="font-['Cormorant_Garamond'] text-[40px] leading-none font-semibold text-[#123b6d] md:text-[50px] lg:text-[64px]">
                 MAZ Watercolor Kit
             </h1>
-            <p className="mt-6 text-[26px] leading-none font-medium text-[#a0432f]">$45.00</p>
+            <p className="mt-6 text-[26px] leading-none font-medium text-[#a0432f] lg:mt-8 lg:text-[34px]">{primaryShopProduct.price}</p>
 
-            <p className="mt-10 text-[20px] leading-8 text-[#4a4f58]">
+            <p className="mt-10 text-[20px] leading-8 text-[#4a4f58] lg:mt-12 lg:text-[25px] lg:leading-[1.65]">
                 Discover the fluidity of pigment and paper with the curated MAZ Watercolor Kit. Designed for artists who seek intentionality in every
-                stroke. Includes 20 lightfast pigments, 2 professional brushes, and 300gsm cold-pressed paper.
+                stroke. Includes 12 lightfast pigments, 2 professional brushes, and an 8 by 8 notebook with paper suitable for watercolors.
             </p>
 
-            <div className="mt-12 space-y-4">
-                <Button
-                    type="button"
-                    variant="outline"
-                    className="h-[48px] w-full rounded-none border-[#123b6d] bg-white text-[13px] font-medium tracking-[0.18em] text-[#123b6d] transition-colors hover:bg-[#123b6d] hover:text-white focus-visible:bg-[#123b6d] focus-visible:text-white"
+            <div className="mt-12 space-y-4 lg:mt-14 lg:space-y-5">
+                <AddToCartButton
+                    product={primaryShopProduct}
+                    className="h-[48px] w-full rounded-none border-[#123b6d] bg-white text-[13px] font-medium tracking-[0.18em] text-[#123b6d] transition-colors hover:bg-[#123b6d] hover:text-white focus-visible:bg-[#123b6d] focus-visible:text-white lg:h-[64px] lg:text-[15px]"
+                    showIcon
                 >
-                    <ShoppingBag className="size-4" aria-hidden="true" />
                     ADD TO CART
-                </Button>
-                <Button
-                    type="button"
-                    variant="outline"
-                    className="h-[46px] w-full rounded-none border-[#838994] bg-white text-[13px] font-medium tracking-[0.18em] text-[#123b6d] hover:bg-[#f8f9fb] hover:text-[#123b6d]"
+                </AddToCartButton>
+                <AddToCartButton
+                    product={primaryShopProduct}
+                    className="h-[46px] w-full rounded-none border-[#838994] bg-white text-[13px] font-medium tracking-[0.18em] text-[#123b6d] hover:bg-[#f8f9fb] hover:text-[#123b6d] lg:h-[62px] lg:text-[15px]"
+                    onAdded={handleBuyNowNavigation}
                 >
                     BUY NOW
-                </Button>
-            </div>
-
-            <div className="mt-16 border-t border-[#e1e3e7] pt-7">
-                <div className="flex items-center justify-between">
-                    <h2 className="font-['Cormorant_Garamond'] text-[27px] leading-none font-medium text-[#123b6d]">Specifications</h2>
-                    <Plus className="size-5 text-[#5c626d]" aria-hidden="true" />
-                </div>
-
-                <dl className="mt-6 divide-y divide-[#edf0f3] text-[16px] text-[#454a54]">
-                    {specifications.map((item) => (
-                        <div key={item.label} className="grid gap-3 py-4 sm:grid-cols-[0.85fr_1.15fr]">
-                            <dt>{item.label}</dt>
-                            <dd className="text-left sm:text-right">{item.value}</dd>
-                        </div>
-                    ))}
-                </dl>
+                </AddToCartButton>
             </div>
         </aside>
     );
 }
 
+function HowItWorks() {
+    return (
+        <section className="relative overflow-hidden border-y border-[#dfe4e8] bg-[#fbfaf8] px-6 py-28 md:px-10 md:py-36 lg:py-44">
+            <div aria-hidden="true" className="absolute top-0 left-[7%] h-3 w-40 bg-[#159bd7]" />
+            <div aria-hidden="true" className="absolute top-0 left-[calc(7%+10rem)] h-3 w-40 bg-[#e9b80f]" />
+            <div aria-hidden="true" className="absolute top-0 right-[calc(7%+10rem)] h-3 w-40 bg-[#d84b68]" />
+            <div aria-hidden="true" className="absolute top-0 right-[7%] h-3 w-40 bg-[#15915b]" />
+
+            <div className="mx-auto max-w-[1720px]">
+                <ScrollReveal className="mx-auto max-w-[900px] text-center" y={36}>
+                    <p className="text-[13px] font-semibold tracking-[0.24em] text-[#159bd7] uppercase lg:text-[16px]">From case to color</p>
+                    <h2 className="mt-5 font-['Cormorant_Garamond'] text-[46px] leading-none font-semibold text-[#123b6d] md:text-[58px] lg:text-[72px]">
+                        How It Works
+                    </h2>
+                    <p className="mx-auto mt-7 max-w-[720px] text-[17px] leading-7 text-[#4a4f58] lg:text-[22px] lg:leading-9">
+                        Four simple steps. No cups, no complicated setup, and no stressful cleanup.
+                    </p>
+                </ScrollReveal>
+
+                <div className="mt-20 grid gap-6 md:grid-cols-2 lg:mt-28 lg:grid-cols-4 lg:gap-8">
+                    {howItWorksSteps.map((step, index) => {
+                        const Icon = step.icon;
+
+                        return (
+                            <ScrollReveal key={step.title} delay={index * 110} y={42}>
+                                <article
+                                    className="relative h-full overflow-hidden border border-[#dfe4e8] bg-white px-7 pt-9 pb-10 shadow-[0_22px_60px_rgba(18,59,109,0.07)] md:px-9 md:pt-11 md:pb-12 lg:min-h-[430px] lg:px-10 lg:pt-12"
+                                    style={{ '--step-accent': step.accent, '--step-soft': step.softColor } as CSSProperties}
+                                >
+                                    <div className="absolute inset-x-0 top-0 h-2 bg-[var(--step-accent)]" aria-hidden="true" />
+                                    <div className="absolute inset-x-0 top-2 h-36 bg-[var(--step-soft)]" aria-hidden="true" />
+                                    <div className="relative flex items-center justify-between gap-5">
+                                        <span className="flex size-16 items-center justify-center bg-white/85 text-[var(--step-accent)] shadow-[0_10px_28px_rgba(18,59,109,0.08)] lg:size-20">
+                                            <Icon className="size-8 lg:size-10" strokeWidth={1.7} aria-hidden="true" />
+                                        </span>
+                                        <span className="font-['Cormorant_Garamond'] text-[44px] leading-none font-semibold text-[var(--step-accent)] lg:text-[58px]">
+                                            {String(index + 1).padStart(2, '0')}
+                                        </span>
+                                    </div>
+                                    <h3 className="relative mt-9 font-['Cormorant_Garamond'] text-[31px] leading-none font-semibold text-[#123b6d] lg:mt-11 lg:text-[39px]">
+                                        {step.title}
+                                    </h3>
+                                    <p className="relative mt-5 text-[16px] leading-7 text-[#4a4f58] lg:text-[20px] lg:leading-8">
+                                        {step.description}
+                                    </p>
+                                </article>
+                            </ScrollReveal>
+                        );
+                    })}
+                </div>
+            </div>
+        </section>
+    );
+}
+
 function ReviewCard({ quote, author, rating }: (typeof reviews)[number]) {
     return (
-        <figure className="bg-white p-8 shadow-[0_24px_70px_rgba(18,59,109,0.06)] md:p-9">
+        <figure className="bg-white p-8 shadow-[0_24px_70px_rgba(18,59,109,0.06)] md:p-9 lg:min-h-[420px] lg:p-12">
             <RatingStars count={rating} />
-            <blockquote className="mt-8 text-[19px] leading-8 font-medium text-[#24272d] italic">{quote}</blockquote>
-            <figcaption className="mt-8 text-[12px] leading-none font-semibold tracking-[0.12em] text-[#7a818c] uppercase">{author}</figcaption>
+            <blockquote className="mt-8 text-[19px] leading-8 font-medium text-[#24272d] italic lg:text-[23px] lg:leading-10">{quote}</blockquote>
+            <figcaption className="mt-8 text-[12px] leading-none font-semibold tracking-[0.12em] text-[#7a818c] uppercase lg:mt-10 lg:text-[14px]">
+                {author}
+            </figcaption>
         </figure>
     );
 }
 
 function ArtistReviews() {
     return (
-        <section className="px-6 pt-20 pb-32 md:px-10 md:pt-28 md:pb-36">
-            <div className="mx-auto max-w-[1120px]">
-                <div className="mx-auto max-w-[500px] text-center">
-                    <h2 className="font-['Cormorant_Garamond'] text-[38px] leading-none font-medium text-[#123b6d] md:text-[42px]">Artist Reviews</h2>
-                    <p className="mt-6 text-[16px] leading-7 text-[#4a4f58]">
+        <section className="px-6 pt-24 pb-32 md:px-10 md:pt-32 md:pb-40 lg:pt-40 lg:pb-48">
+            <div className="mx-auto max-w-[1600px]">
+                <ScrollReveal className="mx-auto max-w-[720px] text-center" y={38}>
+                    <h2 className="font-['Cormorant_Garamond'] text-[38px] leading-none font-medium text-[#123b6d] md:text-[48px] lg:text-[64px]">
+                        Artist Reviews
+                    </h2>
+                    <p className="mt-6 text-[16px] leading-7 text-[#4a4f58] lg:mt-8 lg:text-[21px] lg:leading-9">
                         Experiences from the studio. How the MAZ collection inspires creators worldwide.
                     </p>
-                </div>
+                </ScrollReveal>
 
-                <div className="mt-24 grid gap-8 md:grid-cols-3">
-                    {reviews.map((review) => (
-                        <ReviewCard key={review.author} {...review} />
+                <div className="mt-24 grid gap-8 md:grid-cols-3 lg:mt-28 lg:gap-10">
+                    {reviews.map((review, index) => (
+                        <ScrollReveal key={review.author} delay={index * 120} y={36}>
+                            <ReviewCard {...review} />
+                        </ScrollReveal>
                     ))}
                 </div>
             </div>
@@ -164,12 +348,17 @@ export function ProductPage() {
     return (
         <ShopLayout>
             <main>
-                <section className="px-6 pt-28 pb-44 md:px-10 md:pt-32 md:pb-56">
-                    <div className="mx-auto grid max-w-[1120px] gap-16 lg:grid-cols-[1.54fr_1fr] lg:gap-16">
-                        <ProductGallery />
-                        <ProductInfo />
+                <section className="px-6 pt-28 pb-36 md:px-10 md:pt-32 md:pb-44 lg:pt-40 lg:pb-52">
+                    <div className="mx-auto grid max-w-[1120px] gap-16 lg:max-w-[1720px] lg:grid-cols-[1.38fr_1fr] lg:gap-24">
+                        <ScrollReveal duration={880} y={32}>
+                            <ProductGallery />
+                        </ScrollReveal>
+                        <ScrollReveal delay={140} duration={880} y={32}>
+                            <ProductInfo />
+                        </ScrollReveal>
                     </div>
                 </section>
+                <HowItWorks />
                 <ArtistReviews />
             </main>
         </ShopLayout>

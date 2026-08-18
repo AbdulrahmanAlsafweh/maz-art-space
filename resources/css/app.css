@@ -156,3 +156,242 @@
         @apply bg-background text-foreground;
     }
 }
+
+.maz-hero-paint-shape {
+    background: linear-gradient(100deg, color-mix(in srgb, var(--shape-color) 72%, white 28%), var(--shape-color)), var(--shape-color);
+    border-radius: 18px 7px 24px 10px;
+    box-shadow:
+        0 26px 54px color-mix(in srgb, var(--shape-color) 28%, transparent),
+        inset 0 1px 0 rgba(255, 255, 255, 0.58);
+    clip-path: polygon(4% 0, 100% 9%, 96% 100%, 0 89%);
+    opacity: 0.7;
+    transform: translate3d(var(--shape-start-x), var(--shape-start-y), 0) rotate(var(--shape-start-rotation));
+    transform-origin: center;
+    animation: maz-hero-shape-drift var(--shape-duration) cubic-bezier(0.45, 0, 0.2, 1) infinite alternate;
+    animation-delay: var(--shape-delay);
+    mix-blend-mode: multiply;
+    will-change: transform;
+}
+
+.maz-hero-paint-shape::after {
+    position: absolute;
+    inset: 18% 7% 22%;
+    content: '';
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.48), rgba(255, 255, 255, 0));
+    clip-path: polygon(0 20%, 100% 0, 92% 100%, 6% 82%);
+    opacity: 0.75;
+}
+
+.maz-hero-paint-shape[data-tone='light'] {
+    opacity: 0.58;
+}
+
+.maz-hero-paint-shape[data-tone='bold'] {
+    opacity: 0.5;
+}
+
+.maz-hero-color-chip {
+    background: linear-gradient(115deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0) 42%), var(--shape-color);
+    border-radius: 8px 2px 10px 3px;
+    box-shadow:
+        0 18px 34px color-mix(in srgb, var(--shape-color) 32%, transparent),
+        inset 0 1px 0 rgba(255, 255, 255, 0.52);
+    clip-path: polygon(13% 0, 100% 10%, 86% 100%, 0 88%);
+    opacity: 0.74;
+    transform: translate3d(var(--shape-start-x), var(--shape-start-y), 0) rotate(var(--shape-start-rotation));
+    animation: maz-hero-shape-drift var(--shape-duration) cubic-bezier(0.45, 0, 0.2, 1) infinite alternate;
+    animation-delay: var(--shape-delay);
+    mix-blend-mode: multiply;
+    will-change: transform;
+}
+
+.maz-scroll-reveal {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translate3d(0, var(--maz-reveal-y, 34px), 0);
+    transition:
+        opacity var(--maz-reveal-duration, 780ms) cubic-bezier(0.22, 1, 0.36, 1),
+        filter var(--maz-reveal-duration, 780ms) cubic-bezier(0.22, 1, 0.36, 1),
+        transform var(--maz-reveal-duration, 780ms) cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--maz-reveal-delay, 0ms);
+    will-change: opacity, filter, transform;
+}
+
+.maz-scroll-reveal[data-reveal-state='visible'] {
+    opacity: 1;
+    filter: blur(0);
+    transform: translate3d(0, 0, 0);
+}
+
+@keyframes maz-hero-shape-drift {
+    from {
+        transform: translate3d(var(--shape-start-x), var(--shape-start-y), 0) rotate(var(--shape-start-rotation));
+    }
+
+    to {
+        transform: translate3d(var(--shape-end-x), var(--shape-end-y), 0) rotate(var(--shape-end-rotation));
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .maz-hero-paint-shape,
+    .maz-hero-color-chip {
+        animation: none;
+        transform: translate3d(0, 0, 0) rotate(var(--shape-start-rotation));
+    }
+
+    .maz-scroll-reveal {
+        opacity: 1;
+        filter: none;
+        transform: none;
+        transition: none;
+    }
+}
+
+.maz-print-document {
+    display: none;
+}
+
+@page {
+    size: A4;
+    margin: 10mm;
+}
+
+@media print {
+    html,
+    body {
+        width: 190mm !important;
+        min-height: 0 !important;
+        margin: 0 !important;
+        overflow: visible !important;
+        background: #fff !important;
+    }
+
+    body > *:not(.maz-print-document) {
+        display: none !important;
+    }
+
+    .maz-print-document {
+        display: block !important;
+        width: 190mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        color: #404651;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+
+    .maz-print-invoice {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        font-size: 8pt !important;
+        line-height: 1.35 !important;
+    }
+
+    .maz-invoice-header {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: flex-start !important;
+        justify-content: space-between !important;
+        gap: 12mm !important;
+        padding-bottom: 6mm !important;
+    }
+
+    .maz-invoice-logo {
+        font-size: 28pt !important;
+    }
+
+    .maz-invoice-kicker {
+        margin-top: 2mm !important;
+        font-size: 7pt !important;
+        letter-spacing: 0.14em !important;
+    }
+
+    .maz-invoice-number {
+        margin-top: 2mm !important;
+        font-size: 8pt !important;
+    }
+
+    .maz-invoice-address-grid {
+        display: grid !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 8mm !important;
+        padding: 5mm 0 !important;
+    }
+
+    .maz-invoice-address-grid h3,
+    .maz-invoice-notes h3 {
+        font-size: 7pt !important;
+        letter-spacing: 0.12em !important;
+    }
+
+    .maz-invoice-address-grid p {
+        font-size: 8pt !important;
+        line-height: 1.4 !important;
+    }
+
+    .maz-invoice-address-grid div div {
+        margin-top: 2mm !important;
+    }
+
+    .maz-invoice-items {
+        padding: 5mm 0 !important;
+    }
+
+    .maz-invoice-items-header {
+        display: grid !important;
+        grid-template-columns: 1fr 16mm 24mm 24mm !important;
+        gap: 3mm !important;
+        padding-bottom: 2mm !important;
+        font-size: 7pt !important;
+        letter-spacing: 0.12em !important;
+    }
+
+    .maz-invoice-item-row {
+        display: grid !important;
+        grid-template-columns: 1fr 16mm 24mm 24mm !important;
+        gap: 3mm !important;
+        padding: 3mm 0 !important;
+        font-size: 8pt !important;
+    }
+
+    .maz-invoice-item-row span:nth-child(2) {
+        text-align: center !important;
+    }
+
+    .maz-invoice-item-row span:nth-child(3),
+    .maz-invoice-item-row span:nth-child(4) {
+        text-align: right !important;
+    }
+
+    .maz-invoice-totals {
+        width: 100% !important;
+        max-width: none !important;
+        margin-top: 5mm !important;
+        font-size: 8pt !important;
+    }
+
+    .maz-invoice-totals > div {
+        margin-top: 0 !important;
+        margin-bottom: 2.2mm !important;
+    }
+
+    .maz-invoice-total {
+        padding-top: 3mm !important;
+        font-size: 12pt !important;
+    }
+
+    .maz-invoice-notes {
+        margin-top: 5mm !important;
+        padding-top: 4mm !important;
+    }
+
+    .maz-invoice-notes p {
+        margin-top: 2mm !important;
+        font-size: 8pt !important;
+        line-height: 1.35 !important;
+    }
+}

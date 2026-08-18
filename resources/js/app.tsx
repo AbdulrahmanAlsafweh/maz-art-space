@@ -1,5 +1,7 @@
 import '../css/app.css';
 
+import { ToastProvider } from '@/components/shared/toast-provider';
+import { CartProvider } from '@/features/shop/components/cart-context';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
@@ -18,7 +20,13 @@ createInertiaApp({
     setup({ el, App, props }) {
         const root = createRoot(el);
 
-        root.render(<App {...props} />);
+        root.render(
+            <ToastProvider>
+                <CartProvider>
+                    <App {...props} />
+                </CartProvider>
+            </ToastProvider>,
+        );
     },
     progress: {
         color: '#4B5563',

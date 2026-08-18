@@ -45,6 +45,7 @@ export function ColorScrollAnimation() {
     const [progress, setProgress] = useState(0);
     const [stageSize, setStageSize] = useState<StageSize>({ width: 1120, height: 620 });
     const [activeColorSlug, setActiveColorSlug] = useState<string | null>(null);
+    const [hasInteractedWithColors, setHasInteractedWithColors] = useState(false);
     const [supportsHover, setSupportsHover] = useState(true);
 
     useEffect(() => {
@@ -166,31 +167,72 @@ export function ColorScrollAnimation() {
         return () => hoverQuery.removeEventListener('change', updatePointerMode);
     }, []);
 
+    useEffect(() => {
+        const section = sectionRef.current;
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        if (!section || supportsHover || hasInteractedWithColors || prefersReducedMotion) {
+            return;
+        }
+
+        let previewTimeoutId = 0;
+        let clearPreviewTimeoutId = 0;
+
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (!entry.isIntersecting) {
+                    return;
+                }
+
+                previewTimeoutId = window.setTimeout(() => {
+                    setActiveColorSlug(colorTubes[0].slug);
+                    clearPreviewTimeoutId = window.setTimeout(() => setActiveColorSlug(null), 1100);
+                }, 650);
+
+                observer.disconnect();
+            },
+            { threshold: 0.42 },
+        );
+
+        observer.observe(section);
+
+        return () => {
+            observer.disconnect();
+            window.clearTimeout(previewTimeoutId);
+            window.clearTimeout(clearPreviewTimeoutId);
+        };
+    }, [hasInteractedWithColors, supportsHover]);
+
     const animationStart = 0.42;
     const animationEnd = 1.18;
     const easedProgress = easeInOut(clamp((progress - animationStart) / (animationEnd - animationStart)));
     const isCompactLayout = stageSize.width < 820;
-    const itemWidth = isCompactLayout ? clamp(stageSize.width / 8, 62, 118) : clamp(stageSize.width / 7.1, 100, 182);
+    const itemWidth = isCompactLayout ? clamp(stageSize.width / 6.9, 72, 136) : clamp(stageSize.width / 6.45, 116, 204);
     const itemHeight = itemWidth * 1.67;
     const centerX = stageSize.width / 2;
     const centerY = stageSize.height * 0.5;
     const circleRadius = isCompactLayout ? clamp(stageSize.width * 0.22, 86, 150) : clamp(stageSize.width * 0.2, 130, 260);
     const rowLength = isCompactLayout ? 6 : colorTubes.length;
-    const lineSpacing = Math.min(itemWidth * (isCompactLayout ? 1.4 : 1.22), (stageSize.width * 0.9) / (rowLength - 1));
+    const lineSpacing = Math.min(itemWidth * (isCompactLayout ? 1.2 : 1.16), (stageSize.width * 0.9) / (rowLength - 1));
     const lineWidth = lineSpacing * (colorTubes.length - 1);
     const compactLineWidth = lineSpacing * (rowLength - 1);
-    const lineY = isCompactLayout ? stageSize.height * 0.48 : stageSize.height * 0.58;
-    const rowGap = itemHeight * 1.35;
+    const lineY = isCompactLayout ? stageSize.height * 0.34 : stageSize.height * 0.62;
+    const rowGap = itemHeight * (isCompactLayout ? 1.48 : 1.18);
+    const activeColor = activeColorSlug ? colorTubes.find((tube) => tube.slug === activeColorSlug) : null;
 
     return (
-        <section ref={sectionRef} className="relative h-[1580px] overflow-x-hidden bg-white px-6 py-24 md:h-[1450px] md:px-10 md:py-28">
-            <div className="mx-auto max-w-3xl text-center">
+        <section
+            ref={sectionRef}
+            className="relative h-[820px] overflow-x-clip overflow-y-visible bg-white px-6 pt-24 pb-16 md:h-[1040px] md:px-10 md:pt-32 md:pb-0"
+        >
+            <div className="relative z-10 mx-auto max-w-3xl text-center">
                 <h2 className="font-['Cormorant_Garamond'] text-[50px] leading-none font-medium text-[#123b6d] md:text-[72px]">The Color Palette</h2>
                 <p className="mt-7 text-[18px] leading-7 text-[#4c525c]">Twelve expressive pigments ready for every wash, blend, and detail.</p>
+                <p className="mt-5 text-[15px] font-medium tracking-[0.12em] text-[#123b6d] uppercase md:hidden">Tap a tube to reveal its shade</p>
             </div>
 
-            <div className="sticky top-[5vh] mx-auto mt-8 flex h-[820px] max-w-[2600px] items-center justify-center overflow-visible md:h-[760px]">
-                <div ref={stageRef} className="relative h-[780px] w-full max-w-[2500px] md:h-[720px]">
+            <div className="sticky top-[14vh] mx-auto mt-12 flex h-[500px] max-w-[2600px] items-start justify-center overflow-visible md:top-[22vh] md:mt-28 md:h-[660px] md:items-center">
+                <div ref={stageRef} className="relative h-[420px] w-full max-w-[2500px] md:h-[630px]">
                     {colorTubes.map((tube, index) => {
                         const angle = (index / colorTubes.length) * Math.PI * 2 - Math.PI / 2;
                         const angleDegrees = (angle * 180) / Math.PI + 90;
@@ -207,6 +249,7 @@ export function ColorScrollAnimation() {
                         const rotation = interpolate(angleDegrees, 0, easedProgress);
                         const scale = interpolate(0.9, 1, easedProgress);
                         const isActive = activeColorSlug === tube.slug;
+                        const shouldShowTapCue = !supportsHover && !hasInteractedWithColors && index === 0;
                         const style: CSSProperties = {
                             height: itemHeight,
                             left: x,
@@ -229,6 +272,7 @@ export function ColorScrollAnimation() {
                                         return;
                                     }
 
+                                    setHasInteractedWithColors(true);
                                     setActiveColorSlug((currentSlug) => (currentSlug === tube.slug ? null : tube.slug));
                                 }}
                                 style={style}
@@ -241,8 +285,10 @@ export function ColorScrollAnimation() {
                                     ].join(' ')}
                                 >
                                     <img
-                                        src={`/colors/${tube.slug}_closed.png`}
+                                        src={`/optimized/colors/${tube.slug}_closed.webp`}
                                         alt=""
+                                        decoding="async"
+                                        loading="lazy"
                                         className={[
                                             'absolute inset-0 h-full w-full object-contain drop-shadow-[0_18px_22px_rgba(18,59,109,0.16)] transition-opacity duration-500 ease-out group-focus-visible:opacity-0',
                                             supportsHover ? 'group-hover:opacity-0' : '',
@@ -250,8 +296,10 @@ export function ColorScrollAnimation() {
                                         ].join(' ')}
                                     />
                                     <img
-                                        src={`/colors/${tube.slug}_opened.png`}
+                                        src={`/optimized/colors/${tube.slug}_opened.webp`}
                                         alt=""
+                                        decoding="async"
+                                        loading="lazy"
                                         className={[
                                             'absolute inset-0 h-full w-full object-contain opacity-0 drop-shadow-[0_24px_28px_rgba(18,59,109,0.2)] transition-opacity duration-500 ease-out group-focus-visible:opacity-100',
                                             supportsHover ? 'group-hover:opacity-100' : '',
@@ -259,9 +307,15 @@ export function ColorScrollAnimation() {
                                         ].join(' ')}
                                     />
                                 </span>
+                                {shouldShowTapCue ? (
+                                    <span className="pointer-events-none absolute -top-2 -right-1 h-5 w-5 rounded-full bg-[#123b6d]/20 md:hidden">
+                                        <span className="absolute inset-1 rounded-full bg-[#123b6d]" />
+                                        <span className="absolute inset-0 animate-ping rounded-full bg-[#123b6d]/35" />
+                                    </span>
+                                ) : null}
                                 <span
                                     className={[
-                                        'pointer-events-none absolute top-[calc(100%+16px)] left-1/2 w-max max-w-[min(210px,42vw)] -translate-x-1/2 px-2 py-2 text-center font-["Instrument_Sans"] text-[16px] leading-tight font-medium tracking-[0.1em] text-[#123b6d] uppercase opacity-0 transition-all duration-300 ease-out group-focus-visible:translate-y-1 group-focus-visible:opacity-100 md:top-[calc(100%+20px)] md:max-w-none md:px-4 md:text-[26px] md:tracking-[0.12em]',
+                                        'pointer-events-none absolute top-[calc(100%+20px)] left-1/2 hidden w-max -translate-x-1/2 px-4 py-2 text-center font-["Instrument_Sans"] leading-tight font-medium tracking-[0.12em] text-[#123b6d] uppercase opacity-0 transition-all duration-300 ease-out group-focus-visible:translate-y-1 group-focus-visible:opacity-100 md:block md:max-w-none md:text-[26px]',
                                         supportsHover ? 'group-hover:translate-y-1 group-hover:opacity-100' : '',
                                         isActive ? 'translate-y-1 opacity-100' : '',
                                     ].join(' ')}
@@ -271,6 +325,17 @@ export function ColorScrollAnimation() {
                             </button>
                         );
                     })}
+
+                    <div
+                        className={[
+                            'pointer-events-none absolute left-1/2 z-[90] w-full max-w-[280px] -translate-x-1/2 text-center font-["Instrument_Sans"] text-[16px] leading-tight font-medium tracking-[0.12em] text-[#123b6d] uppercase transition-opacity duration-300 md:hidden',
+                            activeColor ? 'opacity-100' : 'opacity-0',
+                        ].join(' ')}
+                        style={{ top: lineY + itemHeight * 0.64 }}
+                        aria-hidden="true"
+                    >
+                        {activeColor?.name}
+                    </div>
                 </div>
             </div>
         </section>
