@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/
 import { primaryShopProduct, productGalleryImages } from '@/features/shop/product-data';
 import { router } from '@inertiajs/react';
 import { CheckCircle2, ChevronLeft, ChevronRight, Droplets, Maximize2, Paintbrush, Palette, ZoomIn, ZoomOut } from 'lucide-react';
-import { type CSSProperties, type ReactNode, useState } from 'react';
+import { type CSSProperties, type ReactNode, type PointerEvent as ReactPointerEvent, useRef, useState } from 'react';
 import { AddToCartButton } from './add-to-cart-button';
 import { RatingStars } from './rating-stars';
 import { ShopLayout } from './shop-layout';
@@ -133,10 +133,105 @@ function ProductImageZoomDialog({ image, children }: { image: ProductGalleryImag
 
 function ProductGallery() {
     const [activeIndex, setActiveIndex] = useState(0);
+    const [dragOffsetPercent, setDragOffsetPercent] = useState(0);
+    const [isDragging, setIsDragging] = useState(false);
+    const [skipTrackTransition, setSkipTrackTransition] = useState(false);
+    const dragStartRef = useRef<{ x: number; y: number } | null>(null);
+    const dragAxisRef = useRef<'pending' | 'horizontal' | 'vertical'>('pending');
+    const dragMovedRef = useRef(false);
+    const suppressClickRef = useRef(false);
     const activeImage = productGalleryImages[activeIndex];
 
     const goToImage = (index: number) => {
-        setActiveIndex((index + galleryImageCount) % galleryImageCount);
+        const normalizedIndex = (index + galleryImageCount) % galleryImageCount;
+        const shouldSkipTransition = Math.abs(normalizedIndex - activeIndex) > 1;
+
+        setSkipTrackTransition(shouldSkipTransition);
+        setActiveIndex(normalizedIndex);
+
+        if (shouldSkipTransition) {
+            window.requestAnimationFrame(() => {
+                window.requestAnimationFrame(() => setSkipTrackTransition(false));
+            });
+        }
+    };
+
+    const resetDrag = () => {
+        dragStartRef.current = null;
+        dragAxisRef.current = 'pending';
+        setDragOffsetPercent(0);
+        setIsDragging(false);
+    };
+
+    const handlePointerDown = (event: ReactPointerEvent<HTMLButtonElement>) => {
+        if (event.pointerType === 'mouse' && event.button !== 0) {
+            return;
+        }
+
+        dragStartRef.current = { x: event.clientX, y: event.clientY };
+        dragAxisRef.current = 'pending';
+        dragMovedRef.current = false;
+        event.currentTarget.setPointerCapture(event.pointerId);
+    };
+
+    const handlePointerMove = (event: ReactPointerEvent<HTMLButtonElement>) => {
+        if (dragStartRef.current === null) {
+            return;
+        }
+
+        const deltaX = event.clientX - dragStartRef.current.x;
+        const deltaY = event.clientY - dragStartRef.current.y;
+
+        if (dragAxisRef.current === 'pending' && Math.max(Math.abs(deltaX), Math.abs(deltaY)) >= 8) {
+            dragAxisRef.current = Math.abs(deltaX) > Math.abs(deltaY) ? 'horizontal' : 'vertical';
+        }
+
+        if (dragAxisRef.current !== 'horizontal') {
+            return;
+        }
+
+        event.preventDefault();
+        dragMovedRef.current = true;
+        setIsDragging(true);
+
+        const viewportWidth = event.currentTarget.getBoundingClientRect().width;
+        setDragOffsetPercent(Math.max(Math.min((deltaX / viewportWidth) * 100, 35), -35));
+    };
+
+    const handlePointerUp = (event: ReactPointerEvent<HTMLButtonElement>) => {
+        if (dragStartRef.current === null) {
+            return;
+        }
+
+        const deltaX = event.clientX - dragStartRef.current.x;
+        const swipeThreshold = Math.min(event.currentTarget.getBoundingClientRect().width * 0.16, 72);
+
+        if (dragAxisRef.current === 'horizontal') {
+            if (deltaX <= -swipeThreshold) {
+                goToImage(activeIndex + 1);
+            } else if (deltaX >= swipeThreshold) {
+                goToImage(activeIndex - 1);
+            }
+        }
+
+        suppressClickRef.current = dragMovedRef.current;
+        resetDrag();
+
+        if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+            event.currentTarget.releasePointerCapture(event.pointerId);
+        }
+
+        window.setTimeout(() => {
+            suppressClickRef.current = false;
+        }, 80);
+    };
+
+    const handlePointerCancel = (event: ReactPointerEvent<HTMLButtonElement>) => {
+        resetDrag();
+
+        if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+            event.currentTarget.releasePointerCapture(event.pointerId);
+        }
     };
 
     return (
@@ -145,19 +240,47 @@ function ProductGallery() {
                 <ProductImageZoomDialog image={activeImage}>
                     <button
                         type="button"
-                        className="group relative flex aspect-[1.35/1] w-full items-center justify-center overflow-hidden bg-white p-8 shadow-[0_22px_70px_rgba(18,59,109,0.06)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#123b6d]"
+                        className={[
+                            'group relative flex aspect-[1.35/1] w-full touch-pan-y items-center justify-center overflow-hidden bg-white p-8 shadow-[0_22px_70px_rgba(18,59,109,0.06)] select-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#123b6d]',
+                            isDragging ? 'cursor-grabbing' : 'cursor-grab',
+                        ].join(' ')}
                         aria-label={`Open product image zoom for ${activeImage.alt}`}
+                        onPointerDown={handlePointerDown}
+                        onPointerMove={handlePointerMove}
+                        onPointerUp={handlePointerUp}
+                        onPointerCancel={handlePointerCancel}
+                        onClickCapture={(event) => {
+                            if (!suppressClickRef.current) {
+                                return;
+                            }
+
+                            event.preventDefault();
+                            event.stopPropagation();
+                            suppressClickRef.current = false;
+                        }}
                     >
                         <span className="relative block h-full w-full overflow-hidden">
-                            <img
-                                key={activeImage.src}
-                                src={activeImage.src}
-                                alt={activeImage.alt}
-                                decoding="async"
-                                fetchPriority={activeIndex === 0 ? 'high' : 'auto'}
-                                loading={activeIndex === 0 ? 'eager' : 'lazy'}
-                                className="absolute inset-0 h-full w-full translate-x-0 object-contain opacity-100 transition-[opacity,transform] duration-500 ease-out"
-                            />
+                            <span
+                                className={[
+                                    'flex h-full ease-out',
+                                    isDragging || skipTrackTransition ? 'transition-none' : 'transition-transform duration-500',
+                                ].join(' ')}
+                                style={{ transform: `translateX(calc(-${activeIndex * 100}% + ${dragOffsetPercent}%))` }}
+                            >
+                                {productGalleryImages.map((image, index) => (
+                                    <span key={image.src} className="relative block h-full w-full shrink-0">
+                                        <img
+                                            src={image.src}
+                                            alt={image.alt}
+                                            draggable={false}
+                                            decoding="async"
+                                            fetchPriority={index === 0 ? 'high' : 'auto'}
+                                            loading={index === 0 ? 'eager' : 'lazy'}
+                                            className="absolute inset-0 h-full w-full object-contain"
+                                        />
+                                    </span>
+                                ))}
+                            </span>
                         </span>
                         <span className="absolute right-5 bottom-5 flex size-12 items-center justify-center bg-white/90 text-[#123b6d] shadow-[0_14px_30px_rgba(18,59,109,0.14)] transition-colors group-hover:bg-[#123b6d] group-hover:text-white">
                             <Maximize2 className="size-5" aria-hidden="true" />
