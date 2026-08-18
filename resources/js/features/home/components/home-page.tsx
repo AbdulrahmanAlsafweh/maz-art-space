@@ -462,7 +462,7 @@ function PracticeGallery() {
                 {sectionHeading('In Practice', 'Moments of creation with the MAZ Kit.')}
 
                 <ScrollReveal className="mt-24" delay={120} y={38} onFocus={() => setIsSliderPaused(true)} onBlur={() => setIsSliderPaused(false)}>
-                    <div className="relative mx-auto max-w-[1320px]">
+                    <div className="relative mx-auto max-w-[1520px]">
                         <div className="overflow-hidden" onMouseEnter={() => setIsSliderPaused(true)} onMouseLeave={() => setIsSliderPaused(false)}>
                             <div
                                 className="flex transition-transform duration-700 ease-out"
@@ -474,7 +474,7 @@ function PracticeGallery() {
                                             <DialogTrigger asChild>
                                                 <button
                                                     type="button"
-                                                    className="group mx-auto flex aspect-[1.42/1] w-full max-w-[1120px] items-center justify-center overflow-hidden bg-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#123b6d]"
+                                                    className="group mx-auto flex aspect-[1.235/1] w-full max-w-[1290px] items-center justify-center overflow-hidden bg-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#123b6d] md:aspect-[1.42/1]"
                                                 >
                                                     <img
                                                         src={image.src}

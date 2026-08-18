@@ -59,7 +59,7 @@ class StoreOrderRequest extends FormRequest
             'billing_address.city' => [$billingAddressRequired, 'nullable', 'string', 'max:120'],
             'billing_address.region' => [$billingAddressRequired, 'nullable', 'string', 'max:120'],
             'billing_address.country' => [$billingAddressRequired, 'nullable', Rule::in(['Lebanon'])],
-            'payment_method' => ['required', Rule::in(['cash_on_delivery', 'which_gateway'])],
+            'payment_method' => ['required', Rule::in(['cash_on_delivery'])],
             'notes' => ['nullable', 'string', 'max:1000'],
         ];
     }

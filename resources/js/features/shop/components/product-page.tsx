@@ -244,6 +244,7 @@ function ProductInfo() {
                     product={primaryShopProduct}
                     className="h-[46px] w-full rounded-none border-[#838994] bg-white text-[13px] font-medium tracking-[0.18em] text-[#123b6d] hover:bg-[#f8f9fb] hover:text-[#123b6d] lg:h-[62px] lg:text-[15px]"
                     onAdded={handleBuyNowNavigation}
+                    showQuantityControl={false}
                 >
                     BUY NOW
                 </AddToCartButton>

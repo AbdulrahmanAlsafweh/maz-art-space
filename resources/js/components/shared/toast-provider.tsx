@@ -54,7 +54,10 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             };
 
             setToasts([nextToast]);
-            toastTimers.current.set(id, window.setTimeout(() => dismissToast(id), duration));
+            toastTimers.current.set(
+                id,
+                window.setTimeout(() => dismissToast(id), duration),
+            );
         },
         [dismissToast],
     );
@@ -82,14 +85,14 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             <div
                 aria-live="polite"
                 aria-relevant="additions text"
-                className="pointer-events-none fixed top-5 right-5 z-[100] flex w-[calc(100vw-2.5rem)] max-w-[420px] flex-col gap-3 sm:top-8 sm:right-8 sm:w-full"
+                className="pointer-events-none fixed top-[96px] right-5 z-[300] flex w-[calc(100vw-2.5rem)] max-w-[420px] flex-col gap-3 sm:top-[104px] sm:right-8 sm:w-full"
             >
                 {toasts.map((toast) => (
                     <div
                         key={toast.id}
                         role="status"
                         className={cn(
-                            'pointer-events-auto flex items-start gap-3 rounded-[4px] border p-4 font-["Instrument_Sans"] shadow-[0_18px_44px_rgba(15,23,42,0.12)] animate-in fade-in-0 slide-in-from-top-3',
+                            'animate-in fade-in-0 slide-in-from-top-3 pointer-events-auto flex items-start gap-3 rounded-[4px] border p-4 font-["Instrument_Sans"] shadow-[0_18px_44px_rgba(15,23,42,0.12)]',
                             toast.variant === 'success' && 'border-emerald-200 bg-emerald-50 text-emerald-950',
                         )}
                     >

@@ -207,7 +207,8 @@ export function ColorScrollAnimation() {
     const animationEnd = 1.18;
     const easedProgress = easeInOut(clamp((progress - animationStart) / (animationEnd - animationStart)));
     const isCompactLayout = stageSize.width < 820;
-    const itemWidth = isCompactLayout ? clamp(stageSize.width / 6.9, 72, 136) : clamp(stageSize.width / 6.45, 116, 204);
+    const baseItemWidth = isCompactLayout ? clamp(stageSize.width / 6.9, 72, 136) : clamp(stageSize.width / 6.45, 116, 204);
+    const itemWidth = baseItemWidth * (isCompactLayout ? 1.1 : 1.05);
     const itemHeight = itemWidth * 1.67;
     const centerX = stageSize.width / 2;
     const centerY = stageSize.height * 0.5;

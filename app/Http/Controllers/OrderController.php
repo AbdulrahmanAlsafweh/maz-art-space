@@ -91,7 +91,7 @@ class OrderController extends Controller
     private function paymentLabel(string $paymentMethod): string
     {
         return match ($paymentMethod) {
-            'which_gateway' => 'Which gateway',
+            'whish', 'which_gateway' => 'Whish',
             default => 'Cash on delivery',
         };
     }

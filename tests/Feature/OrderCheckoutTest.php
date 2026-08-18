@@ -89,7 +89,7 @@ it('stores guest checkout orders with separate billing details', function () {
     ]);
 });
 
-it('accepts the frontend which gateway payment option', function () {
+it('rejects Whish orders while the payment method is coming soon', function () {
     $response = $this->post('/orders', [
         'items' => [
             [
@@ -120,19 +120,14 @@ it('accepts the frontend which gateway payment option', function () {
             'region' => '',
             'country' => 'Lebanon',
         ],
-        'payment_method' => 'which_gateway',
+        'payment_method' => 'whish',
         'notes' => '',
     ]);
 
-    $response
-        ->assertRedirect(route('cart'))
-        ->assertSessionHas('order.payment_label', 'Which gateway');
+    $response->assertSessionHasErrors('payment_method');
 
-    $this->assertDatabaseHas('orders', [
-        'customer_email' => null,
+    $this->assertDatabaseMissing('orders', [
         'customer_phone' => '+961 71111111',
-        'payment_method' => 'which_gateway',
-        'total_cents' => 2500,
     ]);
 });
 

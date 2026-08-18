@@ -76,7 +76,7 @@ export function ShopHeader() {
     const { totalQuantity } = useCart();
 
     return (
-        <header className="bg-white font-['Instrument_Sans'] text-[#123b6d]">
+        <header className="sticky top-0 z-[200] border-b border-[#e6e9ed] bg-white font-['Instrument_Sans'] text-[#123b6d] shadow-[0_8px_24px_rgba(18,59,109,0.06)]">
             <AnnouncementBar />
             <div className="relative mx-auto flex h-[112px] max-w-[1788px] items-center justify-between px-6 md:px-10 xl:px-0">
                 <HomeHeaderNav />
@@ -89,7 +89,7 @@ export function ShopHeader() {
                     MAZ
                 </Link>
 
-                <div className="flex items-center gap-7">
+                <div className="ml-auto flex items-center gap-7">
                     <Link href="/cart" className="relative transition-colors hover:text-[#0f315b]" aria-label={`Cart with ${totalQuantity} items`}>
                         <ShoppingBag className="size-[26.4px] stroke-[2]" />
                         {totalQuantity > 0 ? (

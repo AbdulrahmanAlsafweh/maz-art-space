@@ -2,9 +2,10 @@ import { useToast } from '@/components/shared/toast-provider';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Check, ShoppingBag } from 'lucide-react';
-import { type ReactNode, useState } from 'react';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
 import { type ShopProduct } from '../product-data';
 import { useCart } from './cart-context';
+import { QuantityControl } from './quantity-control';
 
 interface AddToCartButtonProps {
     product: ShopProduct;
@@ -12,6 +13,7 @@ interface AddToCartButtonProps {
     children?: ReactNode;
     showIcon?: boolean;
     onAdded?: () => void;
+    showQuantityControl?: boolean;
 }
 
 function playCartTickSound() {
@@ -46,12 +48,42 @@ function playCartTickSound() {
     }
 }
 
-export function AddToCartButton({ product, className, children = 'ADD TO CART', showIcon = false, onAdded }: AddToCartButtonProps) {
-    const { addItem } = useCart();
+export function AddToCartButton({
+    product,
+    className,
+    children = 'ADD TO CART',
+    showIcon = false,
+    onAdded,
+    showQuantityControl = true,
+}: AddToCartButtonProps) {
+    const { addItem, items, updateQuantity } = useCart();
     const { showToast } = useToast();
     const [recentlyAdded, setRecentlyAdded] = useState(false);
+    const addLockRef = useRef(false);
+    const animationTimeoutRef = useRef<number | null>(null);
+    const cartItem = items.find((item) => item.productSlug === product.slug);
+
+    useEffect(
+        () => () => {
+            if (animationTimeoutRef.current !== null) {
+                window.clearTimeout(animationTimeoutRef.current);
+            }
+        },
+        [],
+    );
 
     const handleAddToCart = () => {
+        if (addLockRef.current) {
+            return;
+        }
+
+        if (cartItem) {
+            onAdded?.();
+
+            return;
+        }
+
+        addLockRef.current = true;
         addItem(product);
         playCartTickSound();
         showToast({
@@ -60,9 +92,30 @@ export function AddToCartButton({ product, className, children = 'ADD TO CART', 
             variant: 'success',
         });
         setRecentlyAdded(true);
-        window.setTimeout(() => setRecentlyAdded(false), 1400);
+        animationTimeoutRef.current = window.setTimeout(() => {
+            setRecentlyAdded(false);
+            addLockRef.current = false;
+        }, 700);
         onAdded?.();
     };
+
+    if (showQuantityControl && cartItem && !recentlyAdded) {
+        return (
+            <QuantityControl
+                quantity={cartItem.quantity}
+                min={1}
+                max={20}
+                onChange={(quantity) => updateQuantity(product.slug, quantity)}
+                className={cn(
+                    'animate-in fade-in-0 zoom-in-95 w-full rounded-[2px] border-[#123b6d] bg-white p-0 font-["Instrument_Sans"] text-[#123b6d] duration-300',
+                    className,
+                    'bg-white text-[#123b6d] hover:bg-white hover:text-[#123b6d]',
+                )}
+                buttonClassName="w-[26%] hover:bg-[#123b6d] hover:text-white focus-visible:bg-[#123b6d] focus-visible:text-white focus-visible:outline-none"
+                valueClassName="flex-1 text-[18px] font-semibold lg:text-[20px]"
+            />
+        );
+    }
 
     return (
         <Button
@@ -70,17 +123,13 @@ export function AddToCartButton({ product, className, children = 'ADD TO CART', 
             variant="outline"
             onClick={handleAddToCart}
             className={cn(
-                'rounded-[2px] border-[#123b6d] bg-white font-["Instrument_Sans"] font-medium tracking-[0.22em] text-[#123b6d] transition-colors hover:bg-[#123b6d] hover:text-white focus-visible:bg-[#123b6d] focus-visible:text-white',
+                'rounded-[2px] border-[#123b6d] bg-white font-["Instrument_Sans"] font-medium tracking-[0.22em] text-[#123b6d] transition-[color,background-color,border-color,transform] duration-300 hover:bg-[#123b6d] hover:text-white focus-visible:bg-[#123b6d] focus-visible:text-white',
                 className,
+                recentlyAdded && 'scale-[0.985] border-[#2f8f61] bg-[#2f8f61] text-white hover:bg-[#2f8f61] focus-visible:bg-[#2f8f61]',
             )}
         >
-            {showIcon ? (
-                recentlyAdded ? (
-                    <Check className="size-4" aria-hidden="true" />
-                ) : (
-                    <ShoppingBag className="size-4" aria-hidden="true" />
-                )
-            ) : null}
+            {recentlyAdded ? <Check className="size-4 animate-[bounce_0.45s_ease-out_1]" aria-hidden="true" /> : null}
+            {!recentlyAdded && showIcon ? <ShoppingBag className="size-4" aria-hidden="true" /> : null}
             {recentlyAdded ? 'ADDED' : children}
         </Button>
     );

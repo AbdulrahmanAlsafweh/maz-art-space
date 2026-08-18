@@ -1,45 +1,29 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
-export type Appearance = 'light' | 'dark' | 'system';
+export type Appearance = 'light';
 
-const prefersDark = () => window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-const applyTheme = (appearance: Appearance) => {
-    const isDark = appearance === 'dark' || (appearance === 'system' && prefersDark());
-
-    document.documentElement.classList.toggle('dark', isDark);
-};
-
-const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-
-const handleSystemThemeChange = () => {
-    const currentAppearance = localStorage.getItem('appearance') as Appearance;
-    applyTheme(currentAppearance || 'system');
+const applyLightTheme = () => {
+    document.documentElement.classList.remove('dark');
+    document.documentElement.classList.add('light');
+    document.documentElement.style.colorScheme = 'light';
 };
 
 export function initializeTheme() {
-    const savedAppearance = (localStorage.getItem('appearance') as Appearance) || 'system';
-
-    applyTheme(savedAppearance);
-
-    // Add the event listener for system theme changes...
-    mediaQuery.addEventListener('change', handleSystemThemeChange);
+    localStorage.setItem('appearance', 'light');
+    applyLightTheme();
 }
 
 export function useAppearance() {
-    const [appearance, setAppearance] = useState<Appearance>('system');
+    const appearance: Appearance = 'light';
 
-    const updateAppearance = (mode: Appearance) => {
-        setAppearance(mode);
-        localStorage.setItem('appearance', mode);
-        applyTheme(mode);
+    const updateAppearance: (mode: Appearance) => void = () => {
+        localStorage.setItem('appearance', 'light');
+        applyLightTheme();
     };
 
     useEffect(() => {
-        const savedAppearance = localStorage.getItem('appearance') as Appearance | null;
-        updateAppearance(savedAppearance || 'system');
-
-        return () => mediaQuery.removeEventListener('change', handleSystemThemeChange);
+        localStorage.setItem('appearance', 'light');
+        applyLightTheme();
     }, []);
 
     return { appearance, updateAppearance };

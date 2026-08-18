@@ -1,6 +1,16 @@
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { type SharedData } from '@/types';
@@ -15,7 +25,7 @@ import { QuantityControl } from './quantity-control';
 import { ShopLayout } from './shop-layout';
 
 type CheckoutStep = 'items' | 'customer' | 'review';
-type PaymentMethod = 'cash_on_delivery' | 'which_gateway';
+type PaymentMethod = 'cash_on_delivery' | 'whish';
 type DeliveryZone = 'inside_tripoli' | 'outside_tripoli';
 
 interface CheckoutAddress {
@@ -118,16 +128,25 @@ const checkoutSteps: Array<{ step: CheckoutStep; title: string; description: str
     },
 ];
 
-const paymentOptions: Array<{ value: PaymentMethod; title: string; description: string }> = [
+const paymentOptions: Array<{
+    value: PaymentMethod;
+    title: string;
+    description: string;
+    available: boolean;
+    logoSrc?: string;
+}> = [
     {
         value: 'cash_on_delivery',
         title: 'Cash on delivery',
         description: 'Pay in cash when your order is delivered.',
+        available: true,
     },
     {
-        value: 'which_gateway',
-        title: 'Which gateway',
-        description: 'Frontend placeholder until the Lebanon payment gateway access is connected.',
+        value: 'whish',
+        title: 'Whish',
+        description: 'Coming soon',
+        available: false,
+        logoSrc: '/whish.jpg',
     },
 ];
 
@@ -843,13 +862,60 @@ export function CartPage() {
                                             </h2>
                                             <p className="mt-4 text-[17px] leading-7 text-[#4a4f58]">Delivery is not included in this phase.</p>
                                         </div>
-                                        <button
-                                            type="button"
-                                            onClick={clearCart}
-                                            className="text-[13px] font-medium tracking-[0.16em] text-[#123b6d] uppercase hover:text-[#0f315b]"
-                                        >
-                                            Clear cart
-                                        </button>
+                                        <Dialog>
+                                            <DialogTrigger asChild>
+                                                <button
+                                                    type="button"
+                                                    className="text-[13px] font-medium tracking-[0.16em] text-[#123b6d] uppercase transition-colors hover:text-[#b94737] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#123b6d]"
+                                                >
+                                                    Clear cart
+                                                </button>
+                                            </DialogTrigger>
+                                            <DialogContent className="w-[calc(100%_-_2rem)] max-w-[560px] overflow-hidden rounded-[4px] border border-[#dce2e8] bg-white p-0 text-[#22252c] shadow-[0_30px_90px_rgba(18,59,109,0.22)]">
+                                                <div className="grid h-2 grid-cols-5" aria-hidden="true">
+                                                    <span className="bg-[#31a9e8]" />
+                                                    <span className="bg-[#f1c21b]" />
+                                                    <span className="bg-[#ef5c4f]" />
+                                                    <span className="bg-[#32a66a]" />
+                                                    <span className="bg-[#7452c8]" />
+                                                </div>
+                                                <div className="p-8 sm:p-10">
+                                                    <DialogHeader className="space-y-5 text-left">
+                                                        <div className="flex size-14 items-center justify-center border border-[#f1c7bf] bg-[#fff4f1] text-[#b94737]">
+                                                            <Trash2 className="size-6" aria-hidden="true" />
+                                                        </div>
+                                                        <div>
+                                                            <DialogTitle className="font-['Cormorant_Garamond'] text-[38px] leading-none font-semibold text-[#123b6d]">
+                                                                Clear your cart?
+                                                            </DialogTitle>
+                                                            <DialogDescription className="mt-4 text-[16px] leading-7 text-[#565c66]">
+                                                                This will remove every kit from your cart. This action cannot be undone.
+                                                            </DialogDescription>
+                                                        </div>
+                                                    </DialogHeader>
+                                                    <DialogFooter className="mt-8 !grid grid-cols-1 gap-3 sm:grid-cols-2 sm:space-x-0">
+                                                        <DialogClose asChild>
+                                                            <Button
+                                                                type="button"
+                                                                variant="outline"
+                                                                className="h-12 rounded-none border-[#123b6d] text-[12px] font-medium tracking-[0.14em] text-[#123b6d] uppercase hover:bg-[#eef5fb]"
+                                                            >
+                                                                Keep items
+                                                            </Button>
+                                                        </DialogClose>
+                                                        <DialogClose asChild>
+                                                            <Button
+                                                                type="button"
+                                                                onClick={clearCart}
+                                                                className="h-12 rounded-none bg-[#b94737] text-[12px] font-medium tracking-[0.14em] text-white uppercase hover:bg-[#9d382b]"
+                                                            >
+                                                                Clear cart
+                                                            </Button>
+                                                        </DialogClose>
+                                                    </DialogFooter>
+                                                </div>
+                                            </DialogContent>
+                                        </Dialog>
                                     </div>
 
                                     <div className="divide-y divide-[#edf0f3]">
@@ -1026,27 +1092,50 @@ export function CartPage() {
                                                         <button
                                                             key={option.value}
                                                             type="button"
-                                                            onClick={() => setData('payment_method', option.value)}
+                                                            onClick={() => option.available && setData('payment_method', option.value)}
+                                                            disabled={!option.available}
                                                             className={[
                                                                 'flex min-h-[140px] flex-col items-start border p-6 text-left transition-colors',
-                                                                isSelected
-                                                                    ? 'border-[#123b6d] bg-[#f8fbff]'
-                                                                    : 'border-[#d9dde2] bg-white hover:border-[#123b6d]',
+                                                                !option.available
+                                                                    ? 'cursor-not-allowed border-[#e3e5e8] bg-[#fafafa]'
+                                                                    : isSelected
+                                                                      ? 'border-[#123b6d] bg-[#f8fbff]'
+                                                                      : 'border-[#d9dde2] bg-white hover:border-[#123b6d]',
                                                             ].join(' ')}
                                                             aria-pressed={isSelected}
                                                         >
+                                                            {option.logoSrc ? (
+                                                                <img
+                                                                    src={option.logoSrc}
+                                                                    alt=""
+                                                                    width={48}
+                                                                    height={48}
+                                                                    decoding="async"
+                                                                    className="mb-5 size-12 object-cover"
+                                                                />
+                                                            ) : (
+                                                                <span
+                                                                    className={[
+                                                                        'mb-5 flex size-10 items-center justify-center border',
+                                                                        isSelected
+                                                                            ? 'border-[#123b6d] bg-[#123b6d] text-white'
+                                                                            : 'border-[#c9ced6] text-[#123b6d]',
+                                                                    ].join(' ')}
+                                                                >
+                                                                    <CreditCard className="size-5" aria-hidden="true" />
+                                                                </span>
+                                                            )}
+                                                            <span className="text-[18px] font-medium text-[#123b6d]">{option.title}</span>
                                                             <span
                                                                 className={[
-                                                                    'mb-5 flex size-10 items-center justify-center border',
-                                                                    isSelected
-                                                                        ? 'border-[#123b6d] bg-[#123b6d] text-white'
-                                                                        : 'border-[#c9ced6] text-[#123b6d]',
+                                                                    'mt-3 text-[15px] leading-6',
+                                                                    option.available
+                                                                        ? 'text-[#5c626d]'
+                                                                        : 'font-medium tracking-[0.12em] text-[#ee1748] uppercase',
                                                                 ].join(' ')}
                                                             >
-                                                                <CreditCard className="size-5" aria-hidden="true" />
+                                                                {option.description}
                                                             </span>
-                                                            <span className="text-[18px] font-medium text-[#123b6d]">{option.title}</span>
-                                                            <span className="mt-3 text-[15px] leading-6 text-[#5c626d]">{option.description}</span>
                                                         </button>
                                                     );
                                                 })}
