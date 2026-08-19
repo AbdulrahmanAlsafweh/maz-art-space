@@ -43,7 +43,7 @@ export function ColorScrollAnimation() {
     const progressRef = useRef(0);
     const targetProgressRef = useRef(0);
     const [progress, setProgress] = useState(0);
-    const [stageSize, setStageSize] = useState<StageSize>({ width: 1120, height: 620 });
+    const [stageSize, setStageSize] = useState<StageSize>({ width: 644, height: 357 });
     const [activeColorSlug, setActiveColorSlug] = useState<string | null>(null);
     const [hasInteractedWithColors, setHasInteractedWithColors] = useState(false);
     const [supportsHover, setSupportsHover] = useState(true);
@@ -59,8 +59,8 @@ export function ColorScrollAnimation() {
             const rect = stage.getBoundingClientRect();
 
             setStageSize({
-                width: stage.offsetWidth || rect.width || 1120,
-                height: stage.offsetHeight || rect.height || 620,
+                width: stage.offsetWidth || rect.width || 644,
+                height: stage.offsetHeight || rect.height || 357,
             });
         };
 
@@ -207,14 +207,14 @@ export function ColorScrollAnimation() {
     const animationEnd = 1.18;
     const easedProgress = easeInOut(clamp((progress - animationStart) / (animationEnd - animationStart)));
     const isCompactLayout = stageSize.width < 820;
-    const baseItemWidth = isCompactLayout ? clamp(stageSize.width / 6.9, 72, 136) : clamp(stageSize.width / 6.45, 116, 204);
+    const baseItemWidth = isCompactLayout ? clamp(stageSize.width / 7.2, 42, 78) : clamp(stageSize.width / 6.45, 67, 117);
     const itemWidth = baseItemWidth * (isCompactLayout ? 1.1 : 1.05);
     const itemHeight = itemWidth * 1.67;
     const centerX = stageSize.width / 2;
     const centerY = stageSize.height * 0.5;
-    const circleRadius = isCompactLayout ? clamp(stageSize.width * 0.22, 86, 150) : clamp(stageSize.width * 0.2, 130, 260);
+    const circleRadius = isCompactLayout ? clamp(stageSize.width * 0.2, 50, 86) : clamp(stageSize.width * 0.2, 75, 150);
     const rowLength = isCompactLayout ? 6 : colorTubes.length;
-    const lineSpacing = Math.min(itemWidth * (isCompactLayout ? 1.2 : 1.16), (stageSize.width * 0.9) / (rowLength - 1));
+    const lineSpacing = Math.min(itemWidth * (isCompactLayout ? 1.2 : 1.16), (stageSize.width * (isCompactLayout ? 0.8 : 0.9)) / (rowLength - 1));
     const lineWidth = lineSpacing * (colorTubes.length - 1);
     const compactLineWidth = lineSpacing * (rowLength - 1);
     const lineY = isCompactLayout ? stageSize.height * 0.34 : stageSize.height * 0.62;
@@ -224,16 +224,16 @@ export function ColorScrollAnimation() {
     return (
         <section
             ref={sectionRef}
-            className="relative h-[820px] overflow-x-clip overflow-y-visible bg-white px-6 pt-24 pb-16 md:h-[1040px] md:px-10 md:pt-32 md:pb-0"
+            className="relative h-[471px] overflow-x-hidden overflow-y-visible bg-white px-6 pt-24 pb-16 md:h-[598px] md:px-10 md:pt-32 md:pb-0"
         >
             <div className="relative z-10 mx-auto max-w-3xl text-center">
-                <h2 className="font-['Cormorant_Garamond'] text-[50px] leading-none font-medium text-[#123b6d] md:text-[72px]">The Color Palette</h2>
-                <p className="mt-7 text-[18px] leading-7 text-[#4c525c]">Twelve expressive pigments ready for every wash, blend, and detail.</p>
-                <p className="mt-5 text-[15px] font-medium tracking-[0.12em] text-[#123b6d] uppercase md:hidden">Tap a tube to reveal its shade</p>
+                <h2 className="font-['Cormorant_Garamond'] text-[29px] leading-none font-medium text-[#123b6d] md:text-[41px]">The Color Palette</h2>
+                <p className="mt-7 text-[10px] leading-7 text-[#4c525c]">Twelve expressive pigments ready for every wash, blend, and detail.</p>
+                <p className="mt-5 text-[9px] font-medium tracking-[0.12em] text-[#123b6d] uppercase md:hidden">Tap a tube to reveal its shade</p>
             </div>
 
-            <div className="sticky top-[14vh] mx-auto mt-12 flex h-[500px] max-w-[2600px] items-start justify-center overflow-visible md:top-[22vh] md:mt-28 md:h-[660px] md:items-center">
-                <div ref={stageRef} className="relative h-[420px] w-full max-w-[2500px] md:h-[630px]">
+            <div className="sticky top-[14vh] mx-auto mt-12 flex h-[288px] max-w-[1495px] items-start justify-center overflow-x-hidden overflow-y-visible md:top-[22vh] md:mt-28 md:h-[379px] md:items-center">
+                <div ref={stageRef} className="relative h-[241px] w-full max-w-[1438px] md:h-[362px]">
                     {colorTubes.map((tube, index) => {
                         const angle = (index / colorTubes.length) * Math.PI * 2 - Math.PI / 2;
                         const angleDegrees = (angle * 180) / Math.PI + 90;
@@ -291,7 +291,7 @@ export function ColorScrollAnimation() {
                                         decoding="async"
                                         loading="lazy"
                                         className={[
-                                            'absolute inset-0 h-full w-full object-contain drop-shadow-[0_18px_22px_rgba(18,59,109,0.16)] transition-opacity duration-500 ease-out group-focus-visible:opacity-0',
+                                            'absolute inset-0 h-full w-full object-contain drop-shadow-[0_10px_13px_rgba(18,59,109,0.16)] transition-opacity duration-500 ease-out group-focus-visible:opacity-0',
                                             supportsHover ? 'group-hover:opacity-0' : '',
                                             isActive ? 'opacity-0' : '',
                                         ].join(' ')}
@@ -302,7 +302,7 @@ export function ColorScrollAnimation() {
                                         decoding="async"
                                         loading="lazy"
                                         className={[
-                                            'absolute inset-0 h-full w-full object-contain opacity-0 drop-shadow-[0_24px_28px_rgba(18,59,109,0.2)] transition-opacity duration-500 ease-out group-focus-visible:opacity-100',
+                                            'absolute inset-0 h-full w-full object-contain opacity-0 drop-shadow-[0_14px_16px_rgba(18,59,109,0.2)] transition-opacity duration-500 ease-out group-focus-visible:opacity-100',
                                             supportsHover ? 'group-hover:opacity-100' : '',
                                             isActive ? 'opacity-100' : '',
                                         ].join(' ')}
@@ -316,7 +316,7 @@ export function ColorScrollAnimation() {
                                 ) : null}
                                 <span
                                     className={[
-                                        'pointer-events-none absolute top-[calc(100%+20px)] left-1/2 hidden w-max -translate-x-1/2 px-4 py-2 text-center font-["Instrument_Sans"] leading-tight font-medium tracking-[0.12em] text-[#123b6d] uppercase opacity-0 transition-all duration-300 ease-out group-focus-visible:translate-y-1 group-focus-visible:opacity-100 md:block md:max-w-none md:text-[26px]',
+                                        'pointer-events-none absolute top-[calc(100%+12px)] left-1/2 hidden w-max -translate-x-1/2 px-4 py-2 text-center font-["Instrument_Sans"] leading-tight font-medium tracking-[0.12em] text-[#123b6d] uppercase opacity-0 transition-all duration-300 ease-out group-focus-visible:translate-y-1 group-focus-visible:opacity-100 md:block md:max-w-none md:text-[15px]',
                                         supportsHover ? 'group-hover:translate-y-1 group-hover:opacity-100' : '',
                                         isActive ? 'translate-y-1 opacity-100' : '',
                                     ].join(' ')}
@@ -329,7 +329,7 @@ export function ColorScrollAnimation() {
 
                     <div
                         className={[
-                            'pointer-events-none absolute left-1/2 z-[90] w-full max-w-[280px] -translate-x-1/2 text-center font-["Instrument_Sans"] text-[16px] leading-tight font-medium tracking-[0.12em] text-[#123b6d] uppercase transition-opacity duration-300 md:hidden',
+                            'pointer-events-none absolute left-1/2 z-[90] w-full max-w-[161px] -translate-x-1/2 text-center font-["Instrument_Sans"] text-[9px] leading-tight font-medium tracking-[0.12em] text-[#123b6d] uppercase transition-opacity duration-300 md:hidden',
                             activeColor ? 'opacity-100' : 'opacity-0',
                         ].join(' ')}
                         style={{ top: lineY + itemHeight * 0.64 }}

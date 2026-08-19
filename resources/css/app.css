@@ -159,28 +159,20 @@ body,
 #app {
     width: 100%;
     max-width: 100%;
-    overflow-x: clip;
+    overflow-x: hidden;
 }
 
 .maz-shop-viewport {
     position: relative;
     width: 100%;
     max-width: 100%;
+    overflow-x: hidden;
 }
 
 .maz-shop-content {
     width: 100%;
-    zoom: 0.575;
-}
-
-/* CSS zoom is unavailable before Safari 17.4. Keep the same visual scale on
-   older iPhones without changing the responsive breakpoint calculations. */
-@supports not (zoom: 1) {
-    .maz-shop-content {
-        width: 173.9130434783%;
-        transform: scale(0.575);
-        transform-origin: left top;
-    }
+    max-width: 100%;
+    overflow-x: hidden;
 }
 
 .maz-hero-paint-shape {

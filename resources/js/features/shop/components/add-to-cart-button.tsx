@@ -107,12 +107,12 @@ export function AddToCartButton({
                 max={20}
                 onChange={(quantity) => updateQuantity(product.slug, quantity)}
                 className={cn(
-                    'animate-in fade-in-0 zoom-in-95 w-full rounded-[2px] border-[#123b6d] bg-white p-0 font-["Instrument_Sans"] text-[#123b6d] duration-300',
+                    'animate-in fade-in-0 zoom-in-95 w-full rounded-[1px] border-[#123b6d] bg-white p-0 font-["Instrument_Sans"] text-[#123b6d] duration-300',
                     className,
                     'bg-white text-[#123b6d] hover:bg-white hover:text-[#123b6d]',
                 )}
                 buttonClassName="w-[26%] hover:bg-[#123b6d] hover:text-white focus-visible:bg-[#123b6d] focus-visible:text-white focus-visible:outline-none"
-                valueClassName="flex-1 text-[18px] font-semibold lg:text-[20px]"
+                valueClassName="flex-1 text-[10px] font-semibold lg:text-[12px]"
             />
         );
     }
@@ -123,7 +123,7 @@ export function AddToCartButton({
             variant="outline"
             onClick={handleAddToCart}
             className={cn(
-                'rounded-[2px] border-[#123b6d] bg-white font-["Instrument_Sans"] font-medium tracking-[0.22em] text-[#123b6d] transition-[color,background-color,border-color,transform] duration-300 hover:bg-[#123b6d] hover:text-white focus-visible:bg-[#123b6d] focus-visible:text-white',
+                'rounded-[1px] border-[#123b6d] bg-white font-["Instrument_Sans"] font-medium tracking-[0.22em] text-[#123b6d] transition-[color,background-color,border-color,transform] duration-300 hover:bg-[#123b6d] hover:text-white focus-visible:bg-[#123b6d] focus-visible:text-white',
                 className,
                 recentlyAdded && 'scale-[0.985] border-[#2f8f61] bg-[#2f8f61] text-white hover:bg-[#2f8f61] focus-visible:bg-[#2f8f61]',
             )}

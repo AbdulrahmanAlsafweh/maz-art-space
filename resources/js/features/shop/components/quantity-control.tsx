@@ -28,7 +28,7 @@ export function QuantityControl({ quantity, onChange, min = 0, max = 20, classNa
             >
                 <Minus className="size-4" aria-hidden="true" />
             </button>
-            <span className={cn('w-12 text-center text-[16px] font-medium tabular-nums', valueClassName)}>{normalizedQuantity}</span>
+            <span className={cn('w-12 text-center text-[9px] font-medium tabular-nums', valueClassName)}>{normalizedQuantity}</span>
             <button
                 type="button"
                 onClick={() => onChange(normalizedQuantity + 1)}

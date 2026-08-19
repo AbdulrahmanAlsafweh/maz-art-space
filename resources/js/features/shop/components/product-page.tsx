@@ -73,12 +73,12 @@ function ProductImageZoomDialog({ image, children }: { image: ProductGalleryImag
     return (
         <Dialog onOpenChange={(isOpen) => !isOpen && setZoomStep(0)}>
             <DialogTrigger asChild>{children}</DialogTrigger>
-            <DialogContent className="max-w-[min(94vw,1280px)] gap-0 border-0 bg-white p-0 shadow-[0_28px_90px_rgba(18,59,109,0.18)] [&>button]:bg-white/90 [&>button]:text-[#123b6d]">
+            <DialogContent className="max-w-[min(94vw,736px)] gap-0 border-0 bg-white p-0 shadow-[0_16px_52px_rgba(18,59,109,0.18)] [&>button]:bg-white/90 [&>button]:text-[#123b6d]">
                 <DialogTitle className="sr-only">Zoomed product image</DialogTitle>
 
                 <div className="border-b border-[#e1e3e7] px-6 py-4">
                     <div className="flex items-center justify-between gap-4 pr-10">
-                        <p className="text-[13px] font-medium tracking-[0.16em] text-[#123b6d] uppercase">{image.alt}</p>
+                        <p className="text-[7px] font-medium tracking-[0.16em] text-[#123b6d] uppercase">{image.alt}</p>
                         <div className="flex items-center gap-2">
                             <Button
                                 type="button"
@@ -91,7 +91,7 @@ function ProductImageZoomDialog({ image, children }: { image: ProductGalleryImag
                             >
                                 <ZoomOut className="size-5" aria-hidden="true" />
                             </Button>
-                            <span className="min-w-14 text-center text-[13px] font-medium text-[#4a4f58]">{Math.round(zoomLevel * 100)}%</span>
+                            <span className="min-w-14 text-center text-[7px] font-medium text-[#4a4f58]">{Math.round(zoomLevel * 100)}%</span>
                             <Button
                                 type="button"
                                 variant="outline"
@@ -241,7 +241,7 @@ function ProductGallery() {
                     <button
                         type="button"
                         className={[
-                            'group relative flex aspect-[1.35/1] w-full touch-pan-y items-center justify-center overflow-hidden bg-white p-8 shadow-[0_22px_70px_rgba(18,59,109,0.06)] select-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#123b6d]',
+                            'group relative flex aspect-[1.35/1] w-full touch-pan-y items-center justify-center overflow-hidden bg-white p-8 shadow-[0_13px_40px_rgba(18,59,109,0.06)] select-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#123b6d]',
                             isDragging ? 'cursor-grabbing' : 'cursor-grab',
                         ].join(' ')}
                         aria-label={`Open product image zoom for ${activeImage.alt}`}
@@ -282,7 +282,7 @@ function ProductGallery() {
                                 ))}
                             </span>
                         </span>
-                        <span className="absolute right-5 bottom-5 flex size-12 items-center justify-center bg-white/90 text-[#123b6d] shadow-[0_14px_30px_rgba(18,59,109,0.14)] transition-colors group-hover:bg-[#123b6d] group-hover:text-white">
+                        <span className="absolute right-5 bottom-5 flex size-12 items-center justify-center bg-white/90 text-[#123b6d] shadow-[0_8px_17px_rgba(18,59,109,0.14)] transition-colors group-hover:bg-[#123b6d] group-hover:text-white">
                             <Maximize2 className="size-5" aria-hidden="true" />
                         </span>
                     </button>
@@ -293,7 +293,7 @@ function ProductGallery() {
                         <button
                             type="button"
                             onClick={() => goToImage(activeIndex - 1)}
-                            className="absolute top-1/2 left-4 z-10 flex size-11 -translate-y-1/2 items-center justify-center border border-[#123b6d] bg-white/90 text-[#123b6d] shadow-[0_12px_26px_rgba(18,59,109,0.12)] transition-colors hover:bg-[#123b6d] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#123b6d]"
+                            className="absolute top-1/2 left-4 z-10 flex size-11 -translate-y-1/2 items-center justify-center border border-[#123b6d] bg-white/90 text-[#123b6d] shadow-[0_7px_15px_rgba(18,59,109,0.12)] transition-colors hover:bg-[#123b6d] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#123b6d]"
                             aria-label="Show previous product image"
                         >
                             <ChevronLeft className="size-5" aria-hidden="true" />
@@ -301,7 +301,7 @@ function ProductGallery() {
                         <button
                             type="button"
                             onClick={() => goToImage(activeIndex + 1)}
-                            className="absolute top-1/2 right-4 z-10 flex size-11 -translate-y-1/2 items-center justify-center border border-[#123b6d] bg-white/90 text-[#123b6d] shadow-[0_12px_26px_rgba(18,59,109,0.12)] transition-colors hover:bg-[#123b6d] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#123b6d]"
+                            className="absolute top-1/2 right-4 z-10 flex size-11 -translate-y-1/2 items-center justify-center border border-[#123b6d] bg-white/90 text-[#123b6d] shadow-[0_7px_15px_rgba(18,59,109,0.12)] transition-colors hover:bg-[#123b6d] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#123b6d]"
                             aria-label="Show next product image"
                         >
                             <ChevronRight className="size-5" aria-hidden="true" />
@@ -310,7 +310,7 @@ function ProductGallery() {
                 )}
             </div>
 
-            <div className="mt-5 flex items-center justify-center gap-4 text-[12px] font-medium tracking-[0.12em] text-[#123b6d] uppercase">
+            <div className="mt-5 flex items-center justify-center gap-4 text-[7px] font-medium tracking-[0.12em] text-[#123b6d] uppercase">
                 <div className="flex items-center gap-2">
                     {productGalleryImages.map((image, index) => (
                         <button
@@ -345,36 +345,36 @@ function handleBuyNowNavigation() {
 function ProductInfo({ product }: { product: ShopProduct }) {
     return (
         <aside className="pt-2 lg:pt-5">
-            <h1 className="font-['Cormorant_Garamond'] text-[40px] leading-none font-semibold text-[#123b6d] md:text-[50px] lg:text-[64px]">
+            <h1 className="font-['Cormorant_Garamond'] text-[23px] leading-none font-semibold text-[#123b6d] md:text-[29px] lg:text-[37px]">
                 {product.detailTitle}
             </h1>
             <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3 lg:mt-8">
                 {product.compareAtPrice ? (
-                    <span className="text-[22px] leading-none font-medium text-[#7a818c] line-through decoration-[#a0432f] decoration-2 lg:text-[29px]">
+                    <span className="text-[13px] leading-none font-medium text-[#7a818c] line-through decoration-[#a0432f] decoration-2 lg:text-[17px]">
                         {product.compareAtPrice}
                     </span>
                 ) : null}
-                <span className="text-[26px] leading-none font-medium text-[#a0432f] lg:text-[34px]">{product.price}</span>
+                <span className="text-[15px] leading-none font-medium text-[#a0432f] lg:text-[20px]">{product.price}</span>
                 {product.badgeLabel ? (
-                    <span className="bg-[#123b6d] px-4 py-2 text-[12px] leading-none font-bold tracking-[0.14em] text-white uppercase lg:text-[14px]">
+                    <span className="bg-[#123b6d] px-4 py-2 text-[7px] leading-none font-bold tracking-[0.14em] text-white uppercase lg:text-[8px]">
                         {product.badgeLabel}
                     </span>
                 ) : null}
             </div>
 
-            <p className="mt-10 text-[20px] leading-8 text-[#4a4f58] lg:mt-12 lg:text-[25px] lg:leading-[1.65]">{product.detailDescription}</p>
+            <p className="mt-10 text-[12px] leading-8 text-[#4a4f58] lg:mt-12 lg:text-[14px] lg:leading-[1.65]">{product.detailDescription}</p>
 
             <div className="mt-12 space-y-4 lg:mt-14 lg:space-y-5">
                 <AddToCartButton
                     product={product}
-                    className="h-[48px] w-full rounded-none border-[#123b6d] bg-white text-[13px] font-medium tracking-[0.18em] text-[#123b6d] transition-colors hover:bg-[#123b6d] hover:text-white focus-visible:bg-[#123b6d] focus-visible:text-white lg:h-[64px] lg:text-[15px]"
+                    className="h-[28px] w-full rounded-none border-[#123b6d] bg-white text-[7px] font-medium tracking-[0.18em] text-[#123b6d] transition-colors hover:bg-[#123b6d] hover:text-white focus-visible:bg-[#123b6d] focus-visible:text-white lg:h-[37px] lg:text-[9px]"
                     showIcon
                 >
                     ADD TO CART
                 </AddToCartButton>
                 <AddToCartButton
                     product={product}
-                    className="h-[46px] w-full rounded-none border-[#838994] bg-white text-[13px] font-medium tracking-[0.18em] text-[#123b6d] hover:bg-[#f8f9fb] hover:text-[#123b6d] lg:h-[62px] lg:text-[15px]"
+                    className="h-[26px] w-full rounded-none border-[#838994] bg-white text-[7px] font-medium tracking-[0.18em] text-[#123b6d] hover:bg-[#f8f9fb] hover:text-[#123b6d] lg:h-[36px] lg:text-[9px]"
                     onAdded={handleBuyNowNavigation}
                     showQuantityControl={false}
                 >
@@ -393,13 +393,13 @@ function HowItWorks() {
             <div aria-hidden="true" className="absolute top-0 right-[calc(7%+10rem)] h-3 w-40 bg-[#d84b68]" />
             <div aria-hidden="true" className="absolute top-0 right-[7%] h-3 w-40 bg-[#15915b]" />
 
-            <div className="mx-auto max-w-[1720px]">
-                <ScrollReveal className="mx-auto max-w-[900px] text-center" y={36}>
-                    <p className="text-[13px] font-semibold tracking-[0.24em] text-[#159bd7] uppercase lg:text-[16px]">From case to color</p>
-                    <h2 className="mt-5 font-['Cormorant_Garamond'] text-[46px] leading-none font-semibold text-[#123b6d] md:text-[58px] lg:text-[72px]">
+            <div className="mx-auto max-w-[989px]">
+                <ScrollReveal className="mx-auto max-w-[518px] text-center" y={36}>
+                    <p className="text-[7px] font-semibold tracking-[0.24em] text-[#159bd7] uppercase lg:text-[9px]">From case to color</p>
+                    <h2 className="mt-5 font-['Cormorant_Garamond'] text-[26px] leading-none font-semibold text-[#123b6d] md:text-[33px] lg:text-[41px]">
                         How It Works
                     </h2>
-                    <p className="mx-auto mt-7 max-w-[720px] text-[17px] leading-7 text-[#4a4f58] lg:text-[22px] lg:leading-9">
+                    <p className="mx-auto mt-7 max-w-[414px] text-[10px] leading-7 text-[#4a4f58] lg:text-[13px] lg:leading-9">
                         Four simple steps. No cups, no complicated setup, and no stressful cleanup.
                     </p>
                 </ScrollReveal>
@@ -411,23 +411,23 @@ function HowItWorks() {
                         return (
                             <ScrollReveal key={step.title} delay={index * 110} y={42}>
                                 <article
-                                    className="relative h-full overflow-hidden border border-[#dfe4e8] bg-white px-7 pt-9 pb-10 shadow-[0_22px_60px_rgba(18,59,109,0.07)] md:px-9 md:pt-11 md:pb-12 lg:min-h-[430px] lg:px-10 lg:pt-12"
+                                    className="relative h-full overflow-hidden border border-[#dfe4e8] bg-white px-7 pt-9 pb-10 shadow-[0_13px_34px_rgba(18,59,109,0.07)] md:px-9 md:pt-11 md:pb-12 lg:min-h-[247px] lg:px-10 lg:pt-12"
                                     style={{ '--step-accent': step.accent, '--step-soft': step.softColor } as CSSProperties}
                                 >
                                     <div className="absolute inset-x-0 top-0 h-2 bg-[var(--step-accent)]" aria-hidden="true" />
                                     <div className="absolute inset-x-0 top-2 h-36 bg-[var(--step-soft)]" aria-hidden="true" />
                                     <div className="relative flex items-center justify-between gap-5">
-                                        <span className="flex size-16 items-center justify-center bg-white/85 text-[var(--step-accent)] shadow-[0_10px_28px_rgba(18,59,109,0.08)] lg:size-20">
+                                        <span className="flex size-16 items-center justify-center bg-white/85 text-[var(--step-accent)] shadow-[0_6px_16px_rgba(18,59,109,0.08)] lg:size-20">
                                             <Icon className="size-8 lg:size-10" strokeWidth={1.7} aria-hidden="true" />
                                         </span>
-                                        <span className="font-['Cormorant_Garamond'] text-[44px] leading-none font-semibold text-[var(--step-accent)] lg:text-[58px]">
+                                        <span className="font-['Cormorant_Garamond'] text-[25px] leading-none font-semibold text-[var(--step-accent)] lg:text-[33px]">
                                             {String(index + 1).padStart(2, '0')}
                                         </span>
                                     </div>
-                                    <h3 className="relative mt-9 font-['Cormorant_Garamond'] text-[31px] leading-none font-semibold text-[#123b6d] lg:mt-11 lg:text-[39px]">
+                                    <h3 className="relative mt-9 font-['Cormorant_Garamond'] text-[18px] leading-none font-semibold text-[#123b6d] lg:mt-11 lg:text-[22px]">
                                         {step.title}
                                     </h3>
-                                    <p className="relative mt-5 text-[16px] leading-7 text-[#4a4f58] lg:text-[20px] lg:leading-8">
+                                    <p className="relative mt-5 text-[9px] leading-7 text-[#4a4f58] lg:text-[12px] lg:leading-8">
                                         {step.description}
                                     </p>
                                 </article>
@@ -442,10 +442,10 @@ function HowItWorks() {
 
 function ReviewCard({ quote, author, rating }: (typeof reviews)[number]) {
     return (
-        <figure className="bg-white p-8 shadow-[0_24px_70px_rgba(18,59,109,0.06)] md:p-9 lg:min-h-[420px] lg:p-12">
+        <figure className="bg-white p-8 shadow-[0_14px_40px_rgba(18,59,109,0.06)] md:p-9 lg:min-h-[241px] lg:p-12">
             <RatingStars count={rating} />
-            <blockquote className="mt-8 text-[19px] leading-8 font-medium text-[#24272d] italic lg:text-[23px] lg:leading-10">{quote}</blockquote>
-            <figcaption className="mt-8 text-[12px] leading-none font-semibold tracking-[0.12em] text-[#7a818c] uppercase lg:mt-10 lg:text-[14px]">
+            <blockquote className="mt-8 text-[11px] leading-8 font-medium text-[#24272d] italic lg:text-[13px] lg:leading-10">{quote}</blockquote>
+            <figcaption className="mt-8 text-[7px] leading-none font-semibold tracking-[0.12em] text-[#7a818c] uppercase lg:mt-10 lg:text-[8px]">
                 {author}
             </figcaption>
         </figure>
@@ -455,12 +455,12 @@ function ReviewCard({ quote, author, rating }: (typeof reviews)[number]) {
 function ArtistReviews() {
     return (
         <section className="px-6 pt-24 pb-32 md:px-10 md:pt-32 md:pb-40 lg:pt-40 lg:pb-48">
-            <div className="mx-auto max-w-[1600px]">
-                <ScrollReveal className="mx-auto max-w-[720px] text-center" y={38}>
-                    <h2 className="font-['Cormorant_Garamond'] text-[38px] leading-none font-medium text-[#123b6d] md:text-[48px] lg:text-[64px]">
+            <div className="mx-auto max-w-[920px]">
+                <ScrollReveal className="mx-auto max-w-[414px] text-center" y={38}>
+                    <h2 className="font-['Cormorant_Garamond'] text-[22px] leading-none font-medium text-[#123b6d] md:text-[28px] lg:text-[37px]">
                         Artist Reviews
                     </h2>
-                    <p className="mt-6 text-[16px] leading-7 text-[#4a4f58] lg:mt-8 lg:text-[21px] lg:leading-9">
+                    <p className="mt-6 text-[9px] leading-7 text-[#4a4f58] lg:mt-8 lg:text-[12px] lg:leading-9">
                         Experiences from the studio. How the MAZ collection inspires creators worldwide.
                     </p>
                 </ScrollReveal>
@@ -482,7 +482,7 @@ export function ProductPage({ product }: { product: ShopProduct }) {
         <ShopLayout>
             <main>
                 <section className="px-6 pt-28 pb-36 md:px-10 md:pt-32 md:pb-44 lg:pt-40 lg:pb-52">
-                    <div className="mx-auto grid max-w-[1120px] gap-16 lg:max-w-[1720px] lg:grid-cols-[1.38fr_1fr] lg:gap-24">
+                    <div className="mx-auto grid max-w-[644px] gap-16 lg:max-w-[989px] lg:grid-cols-[1.38fr_1fr] lg:gap-24">
                         <ScrollReveal duration={880} y={32}>
                             <ProductGallery />
                         </ScrollReveal>

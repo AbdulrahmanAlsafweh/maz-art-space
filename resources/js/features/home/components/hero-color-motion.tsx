@@ -24,10 +24,10 @@ const pigmentStrokes: HeroMotionShape[] = [
         duration: '13s',
         endRotation: '-3deg',
         endX: '4vw',
-        endY: '18px',
+        endY: '10px',
         startRotation: '-8deg',
         startX: '-2vw',
-        startY: '-10px',
+        startY: '-6px',
         tone: 'light',
     },
     {
@@ -37,10 +37,10 @@ const pigmentStrokes: HeroMotionShape[] = [
         duration: '15s',
         endRotation: '-11deg',
         endX: '-4vw',
-        endY: '14px',
+        endY: '8px',
         startRotation: '-5deg',
         startX: '1vw',
-        startY: '-16px',
+        startY: '-9px',
         tone: 'light',
     },
     {
@@ -50,10 +50,10 @@ const pigmentStrokes: HeroMotionShape[] = [
         duration: '14s',
         endRotation: '6deg',
         endX: '5vw',
-        endY: '-12px',
+        endY: '-7px',
         startRotation: '1deg',
         startX: '-3vw',
-        startY: '14px',
+        startY: '8px',
         tone: 'light',
     },
     {
@@ -63,10 +63,10 @@ const pigmentStrokes: HeroMotionShape[] = [
         duration: '12s',
         endRotation: '15deg',
         endX: '-2vw',
-        endY: '-22px',
+        endY: '-13px',
         startRotation: '9deg',
         startX: '3vw',
-        startY: '8px',
+        startY: '5px',
         tone: 'light',
     },
     {
@@ -76,10 +76,10 @@ const pigmentStrokes: HeroMotionShape[] = [
         duration: '11s',
         endRotation: '-18deg',
         endX: '2vw',
-        endY: '-18px',
+        endY: '-10px',
         startRotation: '-10deg',
         startX: '-1vw',
-        startY: '12px',
+        startY: '7px',
         tone: 'bold',
     },
 ];
@@ -91,11 +91,11 @@ const pigmentSwatches: HeroMotionShape[] = [
         delay: '-1s',
         duration: '8s',
         endRotation: '-16deg',
-        endX: '18px',
-        endY: '-10px',
+        endX: '10px',
+        endY: '-6px',
         startRotation: '-23deg',
-        startX: '-10px',
-        startY: '8px',
+        startX: '-6px',
+        startY: '5px',
     },
     {
         className: 'top-[30%] right-[18%] h-7 w-28',
@@ -103,11 +103,11 @@ const pigmentSwatches: HeroMotionShape[] = [
         delay: '-5s',
         duration: '9s',
         endRotation: '14deg',
-        endX: '-16px',
-        endY: '14px',
+        endX: '-9px',
+        endY: '8px',
         startRotation: '7deg',
-        startX: '12px',
-        startY: '-8px',
+        startX: '7px',
+        startY: '-5px',
     },
     {
         className: 'right-[8%] bottom-[24%] h-6 w-24',
@@ -115,11 +115,11 @@ const pigmentSwatches: HeroMotionShape[] = [
         delay: '-3s',
         duration: '8.5s',
         endRotation: '-28deg',
-        endX: '-22px',
-        endY: '-6px',
+        endX: '-13px',
+        endY: '-3px',
         startRotation: '-19deg',
-        startX: '14px',
-        startY: '12px',
+        startX: '8px',
+        startY: '7px',
     },
     {
         className: 'bottom-[18%] left-[24%] h-6 w-24',
@@ -127,11 +127,11 @@ const pigmentSwatches: HeroMotionShape[] = [
         delay: '-7s',
         duration: '9.5s',
         endRotation: '24deg',
-        endX: '16px',
-        endY: '12px',
+        endX: '9px',
+        endY: '7px',
         startRotation: '14deg',
-        startX: '-12px',
-        startY: '-10px',
+        startX: '-7px',
+        startY: '-6px',
     },
     {
         className: 'top-[43%] left-[6%] h-5 w-20',
@@ -139,11 +139,11 @@ const pigmentSwatches: HeroMotionShape[] = [
         delay: '-4s',
         duration: '10s',
         endRotation: '8deg',
-        endX: '20px',
-        endY: '10px',
+        endX: '12px',
+        endY: '6px',
         startRotation: '2deg',
-        startX: '-14px',
-        startY: '-12px',
+        startX: '-8px',
+        startY: '-7px',
     },
 ];
 
@@ -173,7 +173,7 @@ export function HeroColorMotion() {
                 />
             ))}
 
-            <div className="absolute inset-y-[8%] right-[3%] hidden w-[52vw] max-w-[900px] md:block">
+            <div className="absolute inset-y-[8%] right-[3%] hidden w-[52vw] max-w-[518px] md:block">
                 {pigmentSwatches.map((shape, index) => (
                     <span
                         key={`hero-swatch-${index}`}
