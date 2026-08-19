@@ -222,7 +222,7 @@ export function ColorScrollAnimation() {
     const activeColor = activeColorSlug ? colorTubes.find((tube) => tube.slug === activeColorSlug) : null;
 
     return (
-        <section ref={sectionRef} className="relative h-[560px] bg-white px-5 pt-20 pb-12 sm:px-6 md:h-[640px] md:px-10 md:pt-24 md:pb-0">
+        <section ref={sectionRef} className="relative h-[560px] bg-white px-5 pt-10 pb-12 sm:px-6 md:h-[640px] md:px-10 md:pt-12 md:pb-0">
             <div className="relative z-10 mx-auto max-w-3xl text-center">
                 <h2 className="maz-section-title">The Color Palette</h2>
                 <p className="maz-section-copy mx-auto mt-5 max-w-[58ch]">Twelve expressive pigments ready for every wash, blend, and detail.</p>

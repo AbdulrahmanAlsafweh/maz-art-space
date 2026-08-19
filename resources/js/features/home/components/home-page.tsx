@@ -270,7 +270,7 @@ interface WhatsInsideProps {
 
 function WhatsInside({ boxTargetRef }: WhatsInsideProps) {
     return (
-        <ShopSection className="pt-24 pb-20 sm:pt-28 lg:pt-36 lg:pb-28">
+        <ShopSection className="pt-24 pb-10 sm:pt-28 sm:pb-12 lg:pt-36 lg:pb-14">
             <ShopContainer>
                 {sectionHeading("What's Inside", "Everything you need, nothing you don't.")}
 
