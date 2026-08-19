@@ -32,6 +32,13 @@ export interface SharedData {
         textColor: string;
     };
     deliverySettings?: {
+        pricingMode: string;
+        requiresZoneChoice: boolean;
+        samePrice: {
+            label: string;
+            priceCents: number;
+            price: string;
+        };
         zones: Record<
             string,
             {
@@ -41,6 +48,10 @@ export interface SharedData {
             }
         >;
     };
+    policyPages?: Array<{
+        title: string;
+        href: string;
+    }>;
     flash?: {
         success?: string;
         order?: {

@@ -1,5 +1,6 @@
 import '../css/app.css';
 
+import { MazLoadingScreen } from '@/components/shared/maz-loading-screen';
 import { ToastProvider } from '@/components/shared/toast-provider';
 import { CartProvider } from '@/features/shop/components/cart-context';
 import { createInertiaApp } from '@inertiajs/react';
@@ -26,12 +27,24 @@ createInertiaApp({
         root.render(
             <ToastProvider>
                 <CartProvider>
+                    <MazLoadingScreen />
                     <App {...props} />
                 </CartProvider>
             </ToastProvider>,
         );
+
+        window.requestAnimationFrame(() => {
+            const initialLoader = document.getElementById('maz-initial-loader');
+
+            if (!initialLoader) {
+                return;
+            }
+
+            initialLoader.classList.add('maz-loading-screen--hide');
+            window.setTimeout(() => initialLoader.remove(), 360);
+        });
     },
     progress: {
-        color: '#4B5563',
+        color: '#123b6d',
     },
 });

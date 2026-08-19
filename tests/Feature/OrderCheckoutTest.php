@@ -183,3 +183,58 @@ it('applies admin delivery pricing based on the selected delivery zone', functio
         'total_cents' => 3000,
     ]);
 });
+
+it('uses same delivery pricing regardless of selected delivery zone', function () {
+    DeliverySetting::query()->first()->update([
+        'pricing_mode' => DeliverySetting::PRICING_MODE_SAME_PRICE,
+        'same_price_cents' => 300,
+        'inside_tripoli_cents' => 100,
+        'outside_tripoli_cents' => 900,
+    ]);
+
+    $response = $this->post('/orders', [
+        'items' => [
+            [
+                'product_slug' => 'essential-kit',
+                'quantity' => 1,
+            ],
+        ],
+        'delivery_zone' => 'outside_tripoli',
+        'customer' => [
+            'name' => 'Same Price Customer',
+            'email' => '',
+            'phone' => '73333333',
+        ],
+        'shipping_address' => [
+            'full_name' => 'Same Price Customer',
+            'line_one' => 'Mina Road',
+            'line_two' => '',
+            'city' => 'Tripoli',
+            'region' => 'North',
+            'country' => 'Lebanon',
+        ],
+        'billing_same_as_shipping' => true,
+        'billing_address' => [
+            'full_name' => '',
+            'line_one' => '',
+            'line_two' => '',
+            'city' => '',
+            'region' => '',
+            'country' => 'Lebanon',
+        ],
+        'payment_method' => 'cash_on_delivery',
+        'notes' => '',
+    ]);
+
+    $response
+        ->assertRedirect(route('cart'))
+        ->assertSessionHas('order.delivery', '$3.00')
+        ->assertSessionHas('order.delivery_label', 'Lebanon delivery')
+        ->assertSessionHas('order.total', '$28.00');
+
+    $this->assertDatabaseHas('orders', [
+        'delivery_zone' => 'outside_tripoli',
+        'shipping_cents' => 300,
+        'total_cents' => 2800,
+    ]);
+});

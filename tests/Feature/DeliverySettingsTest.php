@@ -19,3 +19,19 @@ it('shares editable delivery prices with the storefront', function () {
             ->where('deliverySettings.zones.outside_tripoli.priceCents', 500)
             ->where('deliverySettings.zones.outside_tripoli.price', '$5.00'));
 });
+
+it('shares same delivery price mode with the storefront', function () {
+    DeliverySetting::query()->first()->update([
+        'pricing_mode' => DeliverySetting::PRICING_MODE_SAME_PRICE,
+        'same_price_cents' => 300,
+    ]);
+
+    $this->get('/cart')
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('deliverySettings.pricingMode', DeliverySetting::PRICING_MODE_SAME_PRICE)
+            ->where('deliverySettings.requiresZoneChoice', false)
+            ->where('deliverySettings.samePrice.label', 'Lebanon delivery')
+            ->where('deliverySettings.samePrice.priceCents', 300)
+            ->where('deliverySettings.samePrice.price', '$3.00'));
+});

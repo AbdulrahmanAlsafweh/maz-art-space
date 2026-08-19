@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\OrderInvoiceController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PolicyPageController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -21,6 +23,12 @@ Route::get('/cart', function () {
 })->name('cart');
 
 Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+
+Route::get('/policies/{slug}', PolicyPageController::class)->name('policies.show');
+
+Route::get('/admin/orders/{order}/invoice', OrderInvoiceController::class)
+    ->middleware('auth')
+    ->name('admin.orders.invoice');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('dashboard', function () {

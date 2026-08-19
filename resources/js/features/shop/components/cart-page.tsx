@@ -17,7 +17,7 @@ import { type SharedData } from '@/types';
 import { type FormDataConvertible } from '@inertiajs/core';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { CheckCircle2, CreditCard, LoaderCircle, PackageCheck, Printer, Trash2 } from 'lucide-react';
-import { type FormEventHandler, useEffect, useMemo, useRef, useState } from 'react';
+import { type FormEventHandler, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { lineDiscountCents, lineOriginalTotalCents, lineTotalCents, singleKitSlug } from '../pricing';
 import { formatMoney } from '../product-data';
@@ -92,7 +92,19 @@ interface InvoiceDetails {
     notes?: string;
 }
 
-const defaultDeliveryZones: Record<DeliveryZone, { label: string; priceCents: number; price: string }> = {
+interface DeliveryPrice {
+    label: string;
+    priceCents: number;
+    price: string;
+}
+
+const defaultSameDeliveryPrice: DeliveryPrice = {
+    label: 'Lebanon delivery',
+    priceCents: 0,
+    price: '$0.00',
+};
+
+const defaultDeliveryZones: Record<DeliveryZone, DeliveryPrice> = {
     inside_tripoli: {
         label: 'Inside Tripoli',
         priceCents: 0,
@@ -380,7 +392,7 @@ function DeliveryZoneSelector({
     onChange,
 }: {
     value: DeliveryZone;
-    zones: Record<DeliveryZone, { label: string; priceCents: number; price: string }>;
+    zones: Record<DeliveryZone, DeliveryPrice>;
     error?: string;
     onChange: (value: DeliveryZone) => void;
 }) {
@@ -419,6 +431,24 @@ function DeliveryZoneSelector({
                 })}
             </div>
             <InputError message={error} />
+        </div>
+    );
+}
+
+function DeliveryPriceSummary({ delivery }: { delivery: DeliveryPrice }) {
+    return (
+        <div className="space-y-4">
+            <div>
+                <h3 className="maz-label">Delivery price</h3>
+                <p className="maz-caption mt-2">Delivery is set by the store. No area choice is needed for this order.</p>
+            </div>
+            <div className="flex min-h-[92px] items-center justify-between gap-6 border border-[#d9dde2] bg-[#f8fbff] p-5">
+                <span>
+                    <span className="block text-[0.95rem] font-semibold text-[#123b6d]">{delivery.label}</span>
+                    <span className="maz-caption mt-2 block">Applies anywhere in Lebanon.</span>
+                </span>
+                <span className="text-[1.05rem] font-semibold text-[#a0432f]">{delivery.price}</span>
+            </div>
         </div>
     );
 }
@@ -708,8 +738,11 @@ export function CartPage() {
     const { items, subtotalCents, discountCents, totalCents, updateQuantity, removeItem, clearCart } = useCart();
     const { deliverySettings, flash } = usePage<SharedData>().props;
     const checkoutTopRef = useRef<HTMLFormElement | null>(null);
+    const scrolledSubmittedOrderRef = useRef<string | null>(null);
     const [activeStep, setActiveStep] = useState<CheckoutStep>('items');
     const [draftOrderNumber, setDraftOrderNumber] = useState(createOrderNumber);
+    const requiresDeliveryZoneChoice = deliverySettings?.requiresZoneChoice ?? true;
+    const sameDeliveryPrice = deliverySettings?.samePrice ?? defaultSameDeliveryPrice;
     const deliveryZones = useMemo(
         () => ({
             inside_tripoli: deliverySettings?.zones?.inside_tripoli ?? defaultDeliveryZones.inside_tripoli,
@@ -726,9 +759,9 @@ export function CartPage() {
         [items],
     );
     const { data, setData, post, processing, errors, reset } = useForm<CheckoutForm>(initialCheckoutForm);
-    const selectedDeliveryZone = deliveryZones[data.delivery_zone] ?? deliveryZones.inside_tripoli;
-    const deliveryCents = selectedDeliveryZone.priceCents;
-    const deliveryLabel = selectedDeliveryZone.label;
+    const selectedDelivery = requiresDeliveryZoneChoice ? (deliveryZones[data.delivery_zone] ?? deliveryZones.inside_tripoli) : sameDeliveryPrice;
+    const deliveryCents = selectedDelivery.priceCents;
+    const deliveryLabel = selectedDelivery.label;
     const fieldErrors = errors as Record<string, string | undefined>;
     const orderFlash = flash?.order;
     const canReviewOrder = isCustomerStepComplete(data);
@@ -747,6 +780,12 @@ export function CartPage() {
         }
     }, [items.length, orderFlash]);
 
+    useEffect(() => {
+        if (!requiresDeliveryZoneChoice && data.delivery_zone !== 'inside_tripoli') {
+            setData('delivery_zone', 'inside_tripoli');
+        }
+    }, [data.delivery_zone, requiresDeliveryZoneChoice, setData]);
+
     const updateShippingAddress = (field: keyof CheckoutAddress, value: string) => {
         setData('shipping_address', { ...data.shipping_address, [field]: value });
     };
@@ -755,7 +794,7 @@ export function CartPage() {
         setData('billing_address', { ...data.billing_address, [field]: value });
     };
 
-    const scrollCheckoutToTop = () => {
+    const scrollCheckoutToTop = useCallback(() => {
         if (typeof window === 'undefined') {
             return;
         }
@@ -770,7 +809,22 @@ export function CartPage() {
         } catch {
             window.scrollTo(0, Math.max(0, targetTop));
         }
-    };
+    }, []);
+
+    const scrollPageToTop = useCallback(() => {
+        if (typeof window === 'undefined') {
+            return;
+        }
+
+        try {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth',
+            });
+        } catch {
+            window.scrollTo(0, 0);
+        }
+    }, []);
 
     const goToCheckoutStep = (step: CheckoutStep) => {
         setActiveStep(step);
@@ -842,6 +896,18 @@ export function CartPage() {
           } satisfies InvoiceDetails)
         : null;
 
+    useEffect(() => {
+        if (!submittedInvoice || scrolledSubmittedOrderRef.current === submittedInvoice.number) {
+            return;
+        }
+
+        scrolledSubmittedOrderRef.current = submittedInvoice.number;
+
+        safeRequestAnimationFrame(() => {
+            safeRequestAnimationFrame(scrollPageToTop);
+        });
+    }, [scrollPageToTop, submittedInvoice]);
+
     const submitOrder: FormEventHandler = (event) => {
         event.preventDefault();
 
@@ -861,6 +927,9 @@ export function CartPage() {
                 reset();
                 setDraftOrderNumber(createOrderNumber());
                 setActiveStep('items');
+                safeRequestAnimationFrame(() => {
+                    safeRequestAnimationFrame(scrollPageToTop);
+                });
             },
         });
     };
@@ -1082,12 +1151,16 @@ export function CartPage() {
                                                 errors={fieldErrors}
                                                 onChange={updateShippingAddress}
                                             />
-                                            <DeliveryZoneSelector
-                                                value={data.delivery_zone}
-                                                zones={deliveryZones}
-                                                error={fieldErrors.delivery_zone}
-                                                onChange={(value) => setData('delivery_zone', value)}
-                                            />
+                                            {requiresDeliveryZoneChoice ? (
+                                                <DeliveryZoneSelector
+                                                    value={data.delivery_zone}
+                                                    zones={deliveryZones}
+                                                    error={fieldErrors.delivery_zone}
+                                                    onChange={(value) => setData('delivery_zone', value)}
+                                                />
+                                            ) : (
+                                                <DeliveryPriceSummary delivery={selectedDelivery} />
+                                            )}
                                         </section>
 
                                         <section className="space-y-8">

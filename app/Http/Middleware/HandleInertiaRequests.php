@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Models\AnnouncementBar;
 use App\Models\DeliverySetting;
+use App\Models\PolicyPage;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -49,6 +50,7 @@ class HandleInertiaRequests extends Middleware
             ],
             'announcementBar' => fn () => AnnouncementBar::publicData(),
             'deliverySettings' => fn () => DeliverySetting::publicData(),
+            'policyPages' => fn () => PolicyPage::publicLinks(),
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
                 'order' => fn () => $request->session()->get('order'),

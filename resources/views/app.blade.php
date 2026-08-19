@@ -14,6 +14,31 @@
                 color-scheme: only light !important;
                 background-color: #ffffff !important;
             }
+
+            #maz-initial-loader {
+                position: fixed;
+                inset: 0;
+                z-index: 1000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: #ffffff;
+                color: #111111;
+                transition: opacity 320ms ease, visibility 320ms ease;
+            }
+
+            #maz-initial-loader.maz-loading-screen--hide {
+                visibility: hidden;
+                opacity: 0;
+            }
+
+            .maz-initial-loader__logo {
+                font-family: 'Cormorant Garamond', Georgia, serif;
+                font-size: clamp(4rem, 14vw, 7rem);
+                line-height: 1;
+                font-weight: 600;
+                letter-spacing: 0.03em;
+            }
         </style>
 
         <link rel="icon" type="image/jpeg" href="{{ asset('logo.jpeg') }}">
@@ -29,6 +54,10 @@
         @inertiaHead
     </head>
     <body class="bg-white font-sans text-[#111111] antialiased" style="color-scheme: only light; background-color: #ffffff; color: #111111;">
+        <div id="maz-initial-loader" role="status" aria-live="polite">
+            <span class="maz-initial-loader__logo">MAZ</span>
+            <span style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">Loading</span>
+        </div>
         @inertia
     </body>
 </html>

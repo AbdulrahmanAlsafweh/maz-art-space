@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Orders\Tables;
 
+use App\Filament\Resources\Orders\Actions\PrintOrderInvoiceAction;
 use App\Models\DeliverySetting;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
@@ -65,6 +66,7 @@ class OrdersTable
             ])
             ->defaultSort('created_at', 'desc')
             ->recordActions([
+                PrintOrderInvoiceAction::make(),
                 ViewAction::make(),
                 EditAction::make(),
             ])

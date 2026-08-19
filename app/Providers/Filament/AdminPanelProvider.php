@@ -5,6 +5,7 @@ namespace App\Providers\Filament;
 use App\Filament\Resources\AnnouncementBars\AnnouncementBarResource;
 use App\Filament\Resources\DeliverySettings\DeliverySettingResource;
 use App\Filament\Resources\Orders\OrderResource;
+use App\Filament\Resources\PolicyPages\PolicyPageResource;
 use App\Filament\Widgets\LatestOrdersWidget;
 use App\Filament\Widgets\OrderStatsWidget;
 use Filament\Http\Middleware\Authenticate;
@@ -40,6 +41,7 @@ class AdminPanelProvider extends PanelProvider
                 OrderResource::class,
                 AnnouncementBarResource::class,
                 DeliverySettingResource::class,
+                PolicyPageResource::class,
             ])
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([

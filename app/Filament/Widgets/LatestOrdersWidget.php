@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Resources\Orders\Actions\PrintOrderInvoiceAction;
 use App\Filament\Resources\Orders\OrderResource;
 use App\Models\Order;
 use Filament\Actions\ViewAction;
@@ -50,6 +51,7 @@ class LatestOrdersWidget extends TableWidget
                     ->dateTime('M j, Y g:i A'),
             ])
             ->recordActions([
+                PrintOrderInvoiceAction::make(),
                 ViewAction::make(),
             ])
             ->recordUrl(fn (Order $record): string => OrderResource::getUrl('view', ['record' => $record]))
