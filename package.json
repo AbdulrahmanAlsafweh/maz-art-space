@@ -7,7 +7,8 @@
         "dev": "vite",
         "format": "prettier --write resources/",
         "format:check": "prettier --check resources/",
-        "lint": "eslint . --fix"
+        "lint": "eslint . --fix",
+        "optimize:images": "php scripts/optimize-images.php"
     },
     "devDependencies": {
         "@eslint/js": "^9.19.0",

@@ -9,7 +9,7 @@ interface ShopLayoutProps {
 export function ShopLayout({ children }: ShopLayoutProps) {
     return (
         <div className="maz-shop-viewport min-h-screen bg-white">
-            <div className="maz-shop-content bg-white font-['Instrument_Sans'] text-[#404651]">
+            <div className="maz-shop-content bg-white pt-[92px] font-['Instrument_Sans'] text-[#404651]">
                 <ShopHeader />
                 {children}
                 <ShopFooter />

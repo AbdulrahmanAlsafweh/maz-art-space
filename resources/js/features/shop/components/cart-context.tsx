@@ -28,10 +28,56 @@ interface CartContextValue {
 
 const CartContext = createContext<CartContextValue | null>(null);
 
-function sanitizeCartItems(items: CartItem[]) {
+function readStoredCart() {
+    if (typeof window === 'undefined') {
+        return null;
+    }
+
+    try {
+        return window.localStorage.getItem(cartStorageKey);
+    } catch {
+        return null;
+    }
+}
+
+function writeStoredCart(items: CartItem[]) {
+    if (typeof window === 'undefined') {
+        return;
+    }
+
+    try {
+        window.localStorage.setItem(cartStorageKey, JSON.stringify(items));
+    } catch {
+        // Some iOS Safari configurations block storage writes. The cart should
+        // still work for the current page session when persistence is unavailable.
+    }
+}
+
+function clearStoredCart() {
+    if (typeof window === 'undefined') {
+        return;
+    }
+
+    try {
+        window.localStorage.removeItem(cartStorageKey);
+    } catch {
+        // Ignore blocked storage cleanup.
+    }
+}
+
+function sanitizeCartItems(items: unknown) {
+    if (!Array.isArray(items)) {
+        return [];
+    }
+
     return items
         .map((item) => {
-            const product = productsBySlug.get(item.productSlug);
+            if (!item || typeof item !== 'object') {
+                return null;
+            }
+
+            const cartItem = item as Partial<CartItem>;
+            const product = cartItem.productSlug ? productsBySlug.get(cartItem.productSlug) : null;
 
             if (!product) {
                 return null;
@@ -43,10 +89,10 @@ function sanitizeCartItems(items: CartItem[]) {
                 priceCents: product.priceCents,
                 imageSrc: product.imageSrc,
                 imageAlt: product.imageAlt,
-                quantity: item.quantity,
+                quantity: Number(cartItem.quantity),
             };
         })
-        .filter((item): item is CartItem => item !== null && item.quantity > 0)
+        .filter((item): item is CartItem => item !== null && Number.isFinite(item.quantity) && item.quantity > 0)
         .map((item) => ({
             ...item,
             quantity: Math.min(Math.max(Math.trunc(item.quantity), 1), 20),
@@ -58,7 +104,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const [hasLoadedCart, setHasLoadedCart] = useState(false);
 
     useEffect(() => {
-        const storedCart = window.localStorage.getItem(cartStorageKey);
+        const storedCart = readStoredCart();
 
         if (!storedCart) {
             setHasLoadedCart(true);
@@ -67,9 +113,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
         }
 
         try {
-            setItems(sanitizeCartItems(JSON.parse(storedCart) as CartItem[]));
+            setItems(sanitizeCartItems(JSON.parse(storedCart)));
         } catch {
-            window.localStorage.removeItem(cartStorageKey);
+            clearStoredCart();
         }
 
         setHasLoadedCart(true);
@@ -80,7 +126,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
             return;
         }
 
-        window.localStorage.setItem(cartStorageKey, JSON.stringify(items));
+        writeStoredCart(items);
     }, [hasLoadedCart, items]);
 
     const value = useMemo<CartContextValue>(() => {

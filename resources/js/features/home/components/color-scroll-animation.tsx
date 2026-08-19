@@ -222,18 +222,15 @@ export function ColorScrollAnimation() {
     const activeColor = activeColorSlug ? colorTubes.find((tube) => tube.slug === activeColorSlug) : null;
 
     return (
-        <section
-            ref={sectionRef}
-            className="relative h-[471px] overflow-x-hidden overflow-y-visible bg-white px-6 pt-24 pb-16 md:h-[598px] md:px-10 md:pt-32 md:pb-0"
-        >
+        <section ref={sectionRef} className="relative h-[560px] bg-white px-5 pt-20 pb-12 sm:px-6 md:h-[640px] md:px-10 md:pt-24 md:pb-0">
             <div className="relative z-10 mx-auto max-w-3xl text-center">
-                <h2 className="font-['Cormorant_Garamond'] text-[29px] leading-none font-medium text-[#123b6d] md:text-[41px]">The Color Palette</h2>
-                <p className="mt-7 text-[10px] leading-7 text-[#4c525c]">Twelve expressive pigments ready for every wash, blend, and detail.</p>
-                <p className="mt-5 text-[9px] font-medium tracking-[0.12em] text-[#123b6d] uppercase md:hidden">Tap a tube to reveal its shade</p>
+                <h2 className="maz-section-title">The Color Palette</h2>
+                <p className="maz-section-copy mx-auto mt-5 max-w-[58ch]">Twelve expressive pigments ready for every wash, blend, and detail.</p>
+                <p className="maz-label mt-5 md:hidden">Tap a tube to reveal its shade</p>
             </div>
 
-            <div className="sticky top-[14vh] mx-auto mt-12 flex h-[288px] max-w-[1495px] items-start justify-center overflow-x-hidden overflow-y-visible md:top-[22vh] md:mt-28 md:h-[379px] md:items-center">
-                <div ref={stageRef} className="relative h-[241px] w-full max-w-[1438px] md:h-[362px]">
+            <div className="sticky top-[18vh] mx-auto mt-10 flex h-[340px] max-w-[1495px] items-start justify-center md:top-[22vh] md:mt-20 md:h-[420px] md:items-center">
+                <div ref={stageRef} className="relative h-[300px] w-full max-w-[1438px] md:h-[390px]">
                     {colorTubes.map((tube, index) => {
                         const angle = (index / colorTubes.length) * Math.PI * 2 - Math.PI / 2;
                         const angleDegrees = (angle * 180) / Math.PI + 90;

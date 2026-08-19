@@ -3,6 +3,7 @@ import { Link, usePage } from '@inertiajs/react';
 import { ShoppingBag } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useCart } from './cart-context';
+import { ShopContainer } from './shop-design';
 
 const defaultAnnouncementBar = {
     enabled: true,
@@ -13,8 +14,8 @@ const defaultAnnouncementBar = {
 
 function HomeHeaderNav() {
     return (
-        <nav className="hidden items-center gap-12 text-[9px] tracking-[0.16em] text-[#22252c] md:flex">
-            <a href="/#kit-options" className="border-b border-[#123b6d] pb-2 text-[#123b6d]">
+        <nav className="hidden items-center gap-10 text-[0.78rem] font-medium tracking-[0.12em] text-[#22252c] uppercase md:flex">
+            <a href="/#kit-options" className="border-b border-[#123b6d] pb-2 text-[#123b6d] transition-colors hover:text-[#0f315b]">
                 Shop
             </a>
             <a href="/#gallery" className="transition-colors hover:text-[#123b6d]">
@@ -76,14 +77,14 @@ export function ShopHeader() {
     const { totalQuantity } = useCart();
 
     return (
-        <header className="sticky top-0 z-[200] border-b border-[#e6e9ed] bg-white font-['Instrument_Sans'] text-[#123b6d] shadow-[0_5px_14px_rgba(18,59,109,0.06)]">
+        <header className="fixed top-0 right-0 left-0 z-[500] border-b border-[#e6e9ed] bg-white font-['Instrument_Sans'] text-[#123b6d] shadow-[0_5px_14px_rgba(18,59,109,0.06)]">
             <AnnouncementBar />
-            <div className="relative mx-auto flex h-[64px] max-w-[1028px] items-center justify-between px-6 md:px-10 xl:px-0">
+            <ShopContainer className="relative flex h-[72px] items-center justify-between">
                 <HomeHeaderNav />
 
                 <Link
                     href="/"
-                    className="absolute left-1/2 -translate-x-1/2 font-['Cormorant_Garamond'] text-[33px] leading-none font-semibold text-[#111111] md:text-[51px]"
+                    className="absolute left-1/2 -translate-x-1/2 font-['Cormorant_Garamond'] text-[2.4rem] leading-none font-semibold text-[#111111] md:text-[3.4rem]"
                     aria-label="MAZ home"
                 >
                     MAZ
@@ -91,15 +92,15 @@ export function ShopHeader() {
 
                 <div className="ml-auto flex items-center gap-7">
                     <Link href="/cart" className="relative transition-colors hover:text-[#0f315b]" aria-label={`Cart with ${totalQuantity} items`}>
-                        <ShoppingBag className="size-[15px] stroke-[2]" />
+                        <ShoppingBag className="size-5 stroke-[1.9]" />
                         {totalQuantity > 0 ? (
-                            <span className="absolute -top-3 -right-3 flex h-6 min-w-6 items-center justify-center rounded-full bg-[#123b6d] px-1.5 text-[6px] leading-none font-semibold text-white">
+                            <span className="absolute -top-3 -right-3 flex h-6 min-w-6 items-center justify-center rounded-full bg-[#123b6d] px-1.5 text-[0.65rem] leading-none font-semibold text-white">
                                 {totalQuantity}
                             </span>
                         ) : null}
                     </Link>
                 </div>
-            </div>
+            </ShopContainer>
         </header>
     );
 }

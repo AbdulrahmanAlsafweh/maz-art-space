@@ -7,6 +7,7 @@ import { CheckCircle2, ChevronLeft, ChevronRight, Droplets, Maximize2, Paintbrus
 import { type CSSProperties, type ReactNode, type PointerEvent as ReactPointerEvent, useRef, useState } from 'react';
 import { AddToCartButton } from './add-to-cart-button';
 import { RatingStars } from './rating-stars';
+import { ShopContainer, ShopSectionHeader } from './shop-design';
 import { ShopLayout } from './shop-layout';
 
 const zoomSteps = [1, 1.35, 1.7, 2.1] as const;
@@ -241,7 +242,7 @@ function ProductGallery() {
                     <button
                         type="button"
                         className={[
-                            'group relative flex aspect-[1.35/1] w-full touch-pan-y items-center justify-center overflow-hidden bg-white p-8 shadow-[0_13px_40px_rgba(18,59,109,0.06)] select-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#123b6d]',
+                            'group maz-media-panel relative flex aspect-[1.18/1] w-full touch-pan-y items-center justify-center overflow-hidden p-7 select-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#123b6d] sm:aspect-[1.35/1] md:p-10',
                             isDragging ? 'cursor-grabbing' : 'cursor-grab',
                         ].join(' ')}
                         aria-label={`Open product image zoom for ${activeImage.alt}`}
@@ -262,13 +263,16 @@ function ProductGallery() {
                         <span className="relative block h-full w-full overflow-hidden">
                             <span
                                 className={[
-                                    'flex h-full ease-out',
+                                    'flex h-full w-full ease-out',
                                     isDragging || skipTrackTransition ? 'transition-none' : 'transition-transform duration-500',
                                 ].join(' ')}
                                 style={{ transform: `translateX(calc(-${activeIndex * 100}% + ${dragOffsetPercent}%))` }}
                             >
                                 {productGalleryImages.map((image, index) => (
-                                    <span key={image.src} className="relative block h-full w-full shrink-0">
+                                    <span
+                                        key={image.src}
+                                        className="flex h-full w-full flex-none basis-full items-center justify-center overflow-hidden"
+                                    >
                                         <img
                                             src={image.src}
                                             alt={image.alt}
@@ -276,7 +280,7 @@ function ProductGallery() {
                                             decoding="async"
                                             fetchPriority={index === 0 ? 'high' : 'auto'}
                                             loading={index === 0 ? 'eager' : 'lazy'}
-                                            className="absolute inset-0 h-full w-full object-contain"
+                                            className="max-h-full max-w-[68%] object-contain sm:max-w-full"
                                         />
                                     </span>
                                 ))}
@@ -345,36 +349,30 @@ function handleBuyNowNavigation() {
 function ProductInfo({ product }: { product: ShopProduct }) {
     return (
         <aside className="pt-2 lg:pt-5">
-            <h1 className="font-['Cormorant_Garamond'] text-[23px] leading-none font-semibold text-[#123b6d] md:text-[29px] lg:text-[37px]">
-                {product.detailTitle}
-            </h1>
-            <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3 lg:mt-8">
+            <h1 className="maz-page-title">{product.detailTitle}</h1>
+            <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3 lg:mt-7">
                 {product.compareAtPrice ? (
-                    <span className="text-[13px] leading-none font-medium text-[#7a818c] line-through decoration-[#a0432f] decoration-2 lg:text-[17px]">
+                    <span className="text-[1.1rem] leading-none font-medium text-[#7a818c] line-through decoration-[#a0432f] decoration-2 lg:text-[1.25rem]">
                         {product.compareAtPrice}
                     </span>
                 ) : null}
-                <span className="text-[15px] leading-none font-medium text-[#a0432f] lg:text-[20px]">{product.price}</span>
+                <span className="text-[1.35rem] leading-none font-semibold text-[#a0432f] lg:text-[1.6rem]">{product.price}</span>
                 {product.badgeLabel ? (
-                    <span className="bg-[#123b6d] px-4 py-2 text-[7px] leading-none font-bold tracking-[0.14em] text-white uppercase lg:text-[8px]">
+                    <span className="bg-[#123b6d] px-4 py-2 text-[0.72rem] leading-none font-bold tracking-[0.12em] text-white uppercase">
                         {product.badgeLabel}
                     </span>
                 ) : null}
             </div>
 
-            <p className="mt-10 text-[12px] leading-8 text-[#4a4f58] lg:mt-12 lg:text-[14px] lg:leading-[1.65]">{product.detailDescription}</p>
+            <p className="maz-lead mt-8 max-w-[50ch] lg:mt-10">{product.detailDescription}</p>
 
-            <div className="mt-12 space-y-4 lg:mt-14 lg:space-y-5">
-                <AddToCartButton
-                    product={product}
-                    className="h-[28px] w-full rounded-none border-[#123b6d] bg-white text-[7px] font-medium tracking-[0.18em] text-[#123b6d] transition-colors hover:bg-[#123b6d] hover:text-white focus-visible:bg-[#123b6d] focus-visible:text-white lg:h-[37px] lg:text-[9px]"
-                    showIcon
-                >
+            <div className="mt-10 space-y-4 lg:mt-12 lg:space-y-5">
+                <AddToCartButton product={product} className="w-full" showIcon>
                     ADD TO CART
                 </AddToCartButton>
                 <AddToCartButton
                     product={product}
-                    className="h-[26px] w-full rounded-none border-[#838994] bg-white text-[7px] font-medium tracking-[0.18em] text-[#123b6d] hover:bg-[#f8f9fb] hover:text-[#123b6d] lg:h-[36px] lg:text-[9px]"
+                    className="maz-button-secondary w-full border-[#838994]"
                     onAdded={handleBuyNowNavigation}
                     showQuantityControl={false}
                 >
@@ -387,31 +385,26 @@ function ProductInfo({ product }: { product: ShopProduct }) {
 
 function HowItWorks() {
     return (
-        <section className="relative overflow-hidden border-y border-[#dfe4e8] bg-[#fbfaf8] px-6 py-28 md:px-10 md:py-36 lg:py-44">
+        <section className="relative overflow-hidden border-y border-[#dfe4e8] bg-[#fbfaf8] py-20 sm:py-24 lg:py-32">
             <div aria-hidden="true" className="absolute top-0 left-[7%] h-3 w-40 bg-[#159bd7]" />
             <div aria-hidden="true" className="absolute top-0 left-[calc(7%+10rem)] h-3 w-40 bg-[#e9b80f]" />
             <div aria-hidden="true" className="absolute top-0 right-[calc(7%+10rem)] h-3 w-40 bg-[#d84b68]" />
             <div aria-hidden="true" className="absolute top-0 right-[7%] h-3 w-40 bg-[#15915b]" />
 
-            <div className="mx-auto max-w-[989px]">
-                <ScrollReveal className="mx-auto max-w-[518px] text-center" y={36}>
-                    <p className="text-[7px] font-semibold tracking-[0.24em] text-[#159bd7] uppercase lg:text-[9px]">From case to color</p>
-                    <h2 className="mt-5 font-['Cormorant_Garamond'] text-[26px] leading-none font-semibold text-[#123b6d] md:text-[33px] lg:text-[41px]">
-                        How It Works
-                    </h2>
-                    <p className="mx-auto mt-7 max-w-[414px] text-[10px] leading-7 text-[#4a4f58] lg:text-[13px] lg:leading-9">
-                        Four simple steps. No cups, no complicated setup, and no stressful cleanup.
-                    </p>
+            <ShopContainer>
+                <ScrollReveal y={36}>
+                    <p className="maz-label mx-auto text-center text-[#159bd7]">From case to color</p>
+                    <ShopSectionHeader title="How It Works" subtitle="Four simple steps. No cups, no complicated setup, and no stressful cleanup." />
                 </ScrollReveal>
 
-                <div className="mt-20 grid gap-6 md:grid-cols-2 lg:mt-28 lg:grid-cols-4 lg:gap-8">
+                <div className="mt-14 grid gap-6 md:grid-cols-2 lg:mt-18 lg:grid-cols-4 lg:gap-7">
                     {howItWorksSteps.map((step, index) => {
                         const Icon = step.icon;
 
                         return (
                             <ScrollReveal key={step.title} delay={index * 110} y={42}>
                                 <article
-                                    className="relative h-full overflow-hidden border border-[#dfe4e8] bg-white px-7 pt-9 pb-10 shadow-[0_13px_34px_rgba(18,59,109,0.07)] md:px-9 md:pt-11 md:pb-12 lg:min-h-[247px] lg:px-10 lg:pt-12"
+                                    className="maz-card relative h-full overflow-hidden px-7 pt-9 pb-10 md:px-8 md:pt-10 md:pb-11 lg:min-h-[300px]"
                                     style={{ '--step-accent': step.accent, '--step-soft': step.softColor } as CSSProperties}
                                 >
                                     <div className="absolute inset-x-0 top-0 h-2 bg-[var(--step-accent)]" aria-hidden="true" />
@@ -424,28 +417,24 @@ function HowItWorks() {
                                             {String(index + 1).padStart(2, '0')}
                                         </span>
                                     </div>
-                                    <h3 className="relative mt-9 font-['Cormorant_Garamond'] text-[18px] leading-none font-semibold text-[#123b6d] lg:mt-11 lg:text-[22px]">
-                                        {step.title}
-                                    </h3>
-                                    <p className="relative mt-5 text-[9px] leading-7 text-[#4a4f58] lg:text-[12px] lg:leading-8">
-                                        {step.description}
-                                    </p>
+                                    <h3 className="maz-card-title relative mt-8">{step.title}</h3>
+                                    <p className="maz-body relative mt-4">{step.description}</p>
                                 </article>
                             </ScrollReveal>
                         );
                     })}
                 </div>
-            </div>
+            </ShopContainer>
         </section>
     );
 }
 
 function ReviewCard({ quote, author, rating }: (typeof reviews)[number]) {
     return (
-        <figure className="bg-white p-8 shadow-[0_14px_40px_rgba(18,59,109,0.06)] md:p-9 lg:min-h-[241px] lg:p-12">
+        <figure className="maz-card bg-white p-8 md:p-9 lg:min-h-[290px] lg:p-10">
             <RatingStars count={rating} />
-            <blockquote className="mt-8 text-[11px] leading-8 font-medium text-[#24272d] italic lg:text-[13px] lg:leading-10">{quote}</blockquote>
-            <figcaption className="mt-8 text-[7px] leading-none font-semibold tracking-[0.12em] text-[#7a818c] uppercase lg:mt-10 lg:text-[8px]">
+            <blockquote className="mt-7 text-[0.98rem] leading-8 font-medium text-[#24272d] italic">{quote}</blockquote>
+            <figcaption className="mt-8 text-[0.72rem] leading-none font-semibold tracking-[0.12em] text-[#7a818c] uppercase lg:mt-9">
                 {author}
             </figcaption>
         </figure>
@@ -454,25 +443,23 @@ function ReviewCard({ quote, author, rating }: (typeof reviews)[number]) {
 
 function ArtistReviews() {
     return (
-        <section className="px-6 pt-24 pb-32 md:px-10 md:pt-32 md:pb-40 lg:pt-40 lg:pb-48">
-            <div className="mx-auto max-w-[920px]">
-                <ScrollReveal className="mx-auto max-w-[414px] text-center" y={38}>
-                    <h2 className="font-['Cormorant_Garamond'] text-[22px] leading-none font-medium text-[#123b6d] md:text-[28px] lg:text-[37px]">
-                        Artist Reviews
-                    </h2>
-                    <p className="mt-6 text-[9px] leading-7 text-[#4a4f58] lg:mt-8 lg:text-[12px] lg:leading-9">
-                        Experiences from the studio. How the MAZ collection inspires creators worldwide.
-                    </p>
+        <section className="py-20 sm:py-24 lg:py-32">
+            <ShopContainer>
+                <ScrollReveal y={38}>
+                    <ShopSectionHeader
+                        title="Artist Reviews"
+                        subtitle="Experiences from the studio. How the MAZ collection inspires creators worldwide."
+                    />
                 </ScrollReveal>
 
-                <div className="mt-24 grid gap-8 md:grid-cols-3 lg:mt-28 lg:gap-10">
+                <div className="mt-14 grid gap-8 md:grid-cols-3 lg:mt-18 lg:gap-9">
                     {reviews.map((review, index) => (
                         <ScrollReveal key={review.author} delay={index * 120} y={36}>
                             <ReviewCard {...review} />
                         </ScrollReveal>
                     ))}
                 </div>
-            </div>
+            </ShopContainer>
         </section>
     );
 }
@@ -481,15 +468,15 @@ export function ProductPage({ product }: { product: ShopProduct }) {
     return (
         <ShopLayout>
             <main>
-                <section className="px-6 pt-28 pb-36 md:px-10 md:pt-32 md:pb-44 lg:pt-40 lg:pb-52">
-                    <div className="mx-auto grid max-w-[644px] gap-16 lg:max-w-[989px] lg:grid-cols-[1.38fr_1fr] lg:gap-24">
-                        <ScrollReveal duration={880} y={32}>
+                <section className="py-16 sm:py-20 lg:py-28">
+                    <ShopContainer className="grid max-w-[760px] gap-12 lg:max-w-[1180px] lg:grid-cols-[1.2fr_0.8fr] lg:gap-16">
+                        <div>
                             <ProductGallery />
-                        </ScrollReveal>
-                        <ScrollReveal delay={140} duration={880} y={32}>
+                        </div>
+                        <div>
                             <ProductInfo product={product} />
-                        </ScrollReveal>
-                    </div>
+                        </div>
+                    </ShopContainer>
                 </section>
                 <HowItWorks />
                 <ArtistReviews />

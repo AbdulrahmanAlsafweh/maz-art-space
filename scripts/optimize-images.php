@@ -10,8 +10,8 @@ if (! function_exists('imagewebp')) {
 $root = dirname(__DIR__);
 
 $jobs = [
-    ['public/what_inside/box.png', 'public/optimized/box-900.webp', 900, 82],
-    ['public/what_inside/box.png', 'public/optimized/box-1400.webp', 1400, 82],
+    ['public/product/box.png', 'public/optimized/box-900.webp', 900, 82],
+    ['public/product/box.png', 'public/optimized/box-1400.webp', 1400, 82],
 ];
 
 $whatInsideImages = [
@@ -32,6 +32,11 @@ $productImages = glob($root.'/public/product/*.{png,jpg,jpeg}', GLOB_BRACE) ?: [
 
 foreach ($productImages as $source) {
     $file = basename($source);
+
+    if (str_contains(pathinfo($file, PATHINFO_FILENAME), '_old')) {
+        continue;
+    }
+
     $jobs[] = ['public/product/'.$file, 'public/optimized/product/'.pathinfo($file, PATHINFO_FILENAME).'.webp', 1400, 82];
 }
 

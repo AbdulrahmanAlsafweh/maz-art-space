@@ -166,13 +166,206 @@ body,
     position: relative;
     width: 100%;
     max-width: 100%;
-    overflow-x: hidden;
 }
 
 .maz-shop-content {
     width: 100%;
     max-width: 100%;
-    overflow-x: hidden;
+    --maz-blue: #123b6d;
+    --maz-blue-dark: #0f315b;
+    --maz-ink: #252a32;
+    --maz-muted: #555c66;
+    --maz-soft: #f7f3ee;
+    --maz-line: #d9dde2;
+    --maz-serif: 'Cormorant Garamond', serif;
+    --maz-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--maz-sans);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--maz-ink);
+    background: #ffffff;
+}
+
+.maz-display {
+    max-width: 11ch;
+    font-family: var(--maz-serif);
+    font-size: 3.7rem;
+    line-height: 0.95;
+    font-weight: 500;
+    color: var(--maz-blue);
+}
+
+.maz-page-title,
+.maz-section-title,
+.maz-card-title {
+    font-family: var(--maz-serif);
+    font-weight: 500;
+    color: var(--maz-blue);
+}
+
+.maz-page-title {
+    max-width: 100%;
+    font-size: 2.75rem;
+    line-height: 1;
+    overflow-wrap: break-word;
+    text-wrap: balance;
+}
+
+.maz-section-title {
+    font-size: 2.5rem;
+    line-height: 1;
+}
+
+.maz-card-title {
+    font-size: 1.55rem;
+    line-height: 1.08;
+}
+
+.maz-lead {
+    max-width: min(44ch, 100%);
+    font-size: 1rem;
+    line-height: 1.75;
+    overflow-wrap: break-word;
+    color: var(--maz-muted);
+}
+
+.maz-section-copy {
+    font-size: 0.96rem;
+    line-height: 1.7;
+    color: var(--maz-muted);
+}
+
+.maz-body {
+    font-size: 0.96rem;
+    line-height: 1.7;
+    color: var(--maz-muted);
+}
+
+.maz-caption {
+    font-size: 0.78rem;
+    line-height: 1.45;
+    color: var(--maz-muted);
+}
+
+.maz-label {
+    font-size: 0.72rem;
+    line-height: 1;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--maz-blue);
+}
+
+.maz-button-base {
+    min-height: 2.875rem;
+    border-radius: 2px;
+    padding-inline: 1.5rem;
+    font-family: var(--maz-sans);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    transition:
+        color 180ms ease,
+        background-color 180ms ease,
+        border-color 180ms ease,
+        transform 180ms ease;
+}
+
+.maz-button-primary {
+    border: 1px solid var(--maz-blue);
+    background: var(--maz-blue);
+    color: #ffffff;
+}
+
+.maz-button-primary:hover,
+.maz-button-primary:focus-visible {
+    background: var(--maz-blue-dark);
+    border-color: var(--maz-blue-dark);
+}
+
+.maz-button-secondary {
+    border: 1px solid var(--maz-blue);
+    background: #ffffff;
+    color: var(--maz-blue);
+}
+
+.maz-button-secondary:hover,
+.maz-button-secondary:focus-visible {
+    background: var(--maz-blue);
+    color: #ffffff;
+}
+
+.maz-media-panel {
+    background: var(--maz-soft);
+    box-shadow: 0 18px 48px rgba(18, 59, 109, 0.08);
+}
+
+.maz-card {
+    border: 1px solid rgba(18, 59, 109, 0.12);
+    background: #ffffff;
+    box-shadow: 0 16px 44px rgba(18, 59, 109, 0.06);
+}
+
+@media (min-width: 768px) {
+    .maz-display {
+        font-size: 5rem;
+    }
+
+    .maz-page-title {
+        font-size: 3.6rem;
+    }
+
+    .maz-section-title {
+        font-size: 3.35rem;
+    }
+
+    .maz-card-title {
+        font-size: 1.85rem;
+    }
+
+    .maz-lead {
+        font-size: 1.08rem;
+    }
+}
+
+@media (min-width: 1280px) {
+    .maz-display {
+        font-size: 5.75rem;
+    }
+
+    .maz-section-title {
+        font-size: 3.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .maz-display {
+        font-size: 3.15rem;
+    }
+
+    .maz-page-title {
+        font-size: 2.35rem;
+    }
+
+    .maz-section-title {
+        font-size: 2.2rem;
+    }
+
+    .maz-lead,
+    .maz-section-copy,
+    .maz-body {
+        font-size: 0.94rem;
+    }
+}
+
+.maz-cart-title {
+    font-size: clamp(2rem, 8.6vw, 3.6rem);
+    line-height: 1.05;
+}
+
+.maz-cart-lead {
+    max-width: min(28ch, 100%);
 }
 
 .maz-hero-paint-shape {

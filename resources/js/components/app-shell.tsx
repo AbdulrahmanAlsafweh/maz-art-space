@@ -7,13 +7,27 @@ interface AppShellProps {
 }
 
 export function AppShell({ children, variant = 'header' }: AppShellProps) {
-    const [isOpen, setIsOpen] = useState(() => (typeof window !== 'undefined' ? localStorage.getItem('sidebar') !== 'false' : true));
+    const [isOpen, setIsOpen] = useState(() => {
+        if (typeof window === 'undefined') {
+            return true;
+        }
+
+        try {
+            return window.localStorage.getItem('sidebar') !== 'false';
+        } catch {
+            return true;
+        }
+    });
 
     const handleSidebarChange = (open: boolean) => {
         setIsOpen(open);
 
         if (typeof window !== 'undefined') {
-            localStorage.setItem('sidebar', String(open));
+            try {
+                window.localStorage.setItem('sidebar', String(open));
+            } catch {
+                // Ignore blocked storage writes.
+            }
         }
     };
 

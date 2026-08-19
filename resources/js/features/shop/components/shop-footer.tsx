@@ -1,41 +1,47 @@
+import { ShopContainer } from './shop-design';
+
 export function ShopFooter() {
     return (
-        <footer className="border-t border-[#d9dde2] bg-white px-6 font-['Instrument_Sans'] text-[#404651] md:px-10">
-            <div className="mx-auto max-w-[1028px] pt-24 pb-9">
-                <div className="grid gap-14 md:grid-cols-[1.1fr_1fr_1fr]">
+        <footer className="border-t border-[#d9dde2] bg-white font-['Instrument_Sans'] text-[#404651]">
+            <ShopContainer className="pt-20 pb-9 lg:pt-24">
+                <div className="grid gap-14 md:grid-cols-[1.2fr_0.8fr_0.8fr]">
                     <div>
-                        <div className="font-['Cormorant_Garamond'] text-[41px] leading-none font-semibold text-[#111111] md:text-[51px]">MAZ</div>
-                        <p className="mt-11 max-w-[184px] text-[11px] leading-8">
-                            Curating tools for intentional creators. Elevating the daily practice of art.
-                        </p>
+                        <div className="font-['Cormorant_Garamond'] text-[3rem] leading-none font-semibold text-[#111111] md:text-[3.4rem]">MAZ</div>
+                        <p className="maz-body mt-8 max-w-[28ch]">Curating tools for intentional creators. Elevating the daily practice of art.</p>
                     </div>
 
                     <div>
-                        <h3 className="text-[10px] leading-none font-medium tracking-[0.18em] text-[#123b6d]">SHOP</h3>
-                        <ul className="mt-10 space-y-7 text-[9px]">
+                        <h3 className="maz-label">SHOP</h3>
+                        <ul className="mt-8 space-y-5 text-[0.78rem] font-medium tracking-[0.12em] text-[#22252c] uppercase">
                             <li>
-                                <a href="/#kit-options">All Products</a>
+                                <a href="/#kit-options" className="transition-colors hover:text-[#123b6d]">
+                                    All Products
+                                </a>
                             </li>
                         </ul>
                     </div>
 
                     <div>
-                        <h3 className="text-[10px] leading-none font-medium tracking-[0.18em] text-[#123b6d]">SUPPORT</h3>
-                        <ul className="mt-10 space-y-7 text-[9px]">
+                        <h3 className="maz-label">SUPPORT</h3>
+                        <ul className="mt-8 space-y-5 text-[0.78rem] font-medium tracking-[0.12em] text-[#22252c] uppercase">
                             <li>
-                                <a href="/#faq">FAQ</a>
+                                <a href="/#faq" className="transition-colors hover:text-[#123b6d]">
+                                    FAQ
+                                </a>
                             </li>
                         </ul>
                     </div>
                 </div>
 
-                <div className="mt-24 flex flex-col gap-8 border-t border-[#d9dde2] pt-9 text-[9px] md:flex-row md:items-center md:justify-between">
+                <div className="mt-18 flex flex-col gap-8 border-t border-[#d9dde2] pt-8 text-[0.85rem] text-[#5c626d] md:flex-row md:items-center md:justify-between">
                     <p>&copy; 2026 MAZ Art Space. Crafted with intentionality.</p>
-                    <div className="flex flex-wrap gap-10 text-[9px]">
-                        <a href="#instagram">Instagram</a>
+                    <div className="flex flex-wrap gap-10 text-[0.78rem] font-medium tracking-[0.12em] text-[#22252c] uppercase">
+                        <a href="#instagram" className="transition-colors hover:text-[#123b6d]">
+                            Instagram
+                        </a>
                     </div>
                 </div>
-            </div>
+            </ShopContainer>
         </footer>
     );
 }
